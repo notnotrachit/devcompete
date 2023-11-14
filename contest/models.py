@@ -1,0 +1,74 @@
+from django.db import models
+
+# Create your models here.
+class Contest(models.Model):
+    name = models.CharField(max_length=100)
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+    description = models.TextField()
+    rules = models.TextField()
+    prizes = models.TextField()
+
+    def __str__(self):
+        return self.name
+    
+class Problem(models.Model):
+    contest = models.ForeignKey(Contest, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+    input_format = models.TextField()
+    output_format = models.TextField()
+    constraints = models.TextField()
+    sample_input = models.TextField()
+    sample_output = models.TextField()
+    score = models.IntegerField()
+
+    def __str__(self):
+        return self.name
+
+class TestCase(models.Model):
+    problem = models.ForeignKey(Problem, on_delete=models.CASCADE)
+    input = models.TextField()
+    output = models.TextField()
+
+    def __str__(self):
+        return self.problem.name + " - " + str(self.pk)
+
+class Submission(models.Model):
+    problem = models.ForeignKey(Problem, on_delete=models.CASCADE)
+    user = models.ForeignKey('users.Profile', on_delete=models.CASCADE)
+    code = models.TextField()
+    status = models.CharField(max_length=100)
+    score = models.IntegerField()
+    language = models.CharField(max_length=100)
+    time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.problem.name + " - " + str(self.pk)
+    
+class SubmissionTestCase(models.Model):
+    submission = models.ForeignKey(Submission, on_delete=models.CASCADE)
+    testcase = models.ForeignKey(TestCase, on_delete=models.CASCADE)
+    status = models.CharField(max_length=100)
+    time = models.IntegerField()
+    memory = models.IntegerField()
+
+    def __str__(self):
+        return self.submission.problem.name + " - " + str(self.pk)
+    
+class ContestProblem(models.Model):
+    contest = models.ForeignKey(Contest, on_delete=models.CASCADE)
+    problem = models.ForeignKey(Problem, on_delete=models.CASCADE)
+    score = models.IntegerField()
+
+    def __str__(self):
+        return self.contest.name + " - " + self.problem.name
+    
+class ContestSubmission(models.Model):
+    contest = models.ForeignKey(Contest, on_delete=models.CASCADE)
+    submission = models.ForeignKey(Submission, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.contest.name + " - " + self.submission.problem.name + " - " + str(self.pk)
+
+

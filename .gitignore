@@ -1,0 +1,36 @@
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__
+*.so
+*.egg
+*.egg-info
+dist
+build
+*.tar.gz
+
+# Django
+*.log
+*.pot
+*.pyc
+db.sqlite3
+media
+
+# Development
+.env
+.venv
+*.bak
+*.swp
+*~
+*.sass-cache
+
+# IDEs
+.vscode
+.idea
+*.sublime-project
+*.sublime-workspace
+
+# OS generated
+.DS_Store
+Thumbs.db
