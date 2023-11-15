@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block main %}
+<div>
+
+    {{ problem.name }}
+    <div id="editor">code</div>
+
+    <button class="btn btn-primary" id="run_btn">Run Code</button>
+
+    <div>
+        <h3 class="text-2xl">Output</h3>
+        <div id="output"></div>
+    </div>
+
+</div>
+<script>
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/monokai");
+    editor.getSession().setMode("ace/mode/python");
+
+
+    var submit_btn = document.getElementById("run_btn");
+    submit_btn.addEventListener("click", function() {
+        var code = editor.getValue();
+        var output = document.getElementById("output");
+        output.innerHTML = "Running...";
+        FormData = {
+            "source_code": code
+        }
+        var response = fetch("./", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify(FormData),
+        }).then(function(response) {
+            return response.json();
+        }).then(function(data) {
+            output.innerHTML = data.output;
+        });
+    });
+</script>
+<style>
+#editor {
+    position: relative;
+    width: 500px;
+    height: 400px;
+}
+</style>
+{% endblock main %}
+

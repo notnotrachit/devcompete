@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 class Contest(models.Model):
@@ -8,6 +9,8 @@ class Contest(models.Model):
     description = models.TextField()
     rules = models.TextField()
     prizes = models.TextField()
+    player1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player1', null=True, blank=True)
+    player2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player2', null=True, blank=True)
 
     def __str__(self):
         return self.name

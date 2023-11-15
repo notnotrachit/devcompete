@@ -9,6 +9,9 @@ readme = "README.md"
 python = "^3.11"
 Django = "^4.2.7"
 django-allauth = "^0.58.2"
+django-allauth-ui = "^0.1.5"
+django-widget-tweaks = "^1.5.0"
+python-dotenv = "^1.0.0"
 
 
 [build-system]

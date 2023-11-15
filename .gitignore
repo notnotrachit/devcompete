@@ -34,3 +34,4 @@ media
 # OS generated
 .DS_Store
 Thumbs.db
+staticfiles

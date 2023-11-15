@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block main %}
+<div>
+    {% for contest in current_contests %}
+    <div class="card w-96 bg-base-100 shadow-xl image-full">
+        <div class="card-body">
+            <h2 class="card-title">{{ contest.name }}</h2>
+            <p>{{ contest.description }}</p>
+            <div class="card-actions justify-end">
+            <button class="btn btn-primary">Start Contest</button>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock main %}
+
