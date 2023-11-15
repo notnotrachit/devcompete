@@ -6,7 +6,7 @@ authors = ["Rachit Khurana <70265590+notnotrachit@users.noreply.github.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.10"
 Django = "^4.2.7"
 django-allauth = "^0.58.2"
 django-allauth-ui = "^0.1.5"
