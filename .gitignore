@@ -9,7 +9,7 @@ __pycache__
 dist
 build
 *.tar.gz
-
+venv
 # Django
 *.log
 *.pot
