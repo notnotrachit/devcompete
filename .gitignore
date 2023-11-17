@@ -16,6 +16,7 @@ venv
 *.pyc
 db.sqlite3
 media
+node_modules
 
 # Development
 .env
@@ -29,7 +30,7 @@ media
 .vscode
 .idea
 *.sublime-project
-*.sublime-workspace
+*.sublime-workspae
 
 # OS generated
 .DS_Store
