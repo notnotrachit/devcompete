@@ -1,17 +1,75 @@
-{% extends "base.html" %}
-{% block main %}
+{% extends "base.html" %} {% block main %}
 <div>
-    {% for contest in current_contests %}
-    <div class="card w-96 bg-base-100 shadow-xl image-full">
-        <div class="card-body">
-            <h2 class="card-title">{{ contest.name }}</h2>
-            <p>{{ contest.description }}</p>
-            <div class="card-actions justify-end">
+  <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+    <table
+      class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
+    >
+      <thead
+        class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+      >
+        <tr>
+          <th scope="col" class="px-6 py-3">Contest Name</th>
+          <th scope="col" class="px-6 py-3">Description</th>
+          <th scope="col" class="px-6 py-3">Start Date</th>
+          <th scope="col" class="px-6 py-3">End Date</th>
+          <th scope="col" class="px-6 py-3"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for contest in current_contests %}
+        <tr class="bg-white dark:bg-gray-800">
+          <th
+            scope="row"
+            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+          >
+            {{ contest.name }}
+          </th>
+
+          <td class="px-6 py-4">
+            <button class="btn" onclick="my_modal_1_showModal()">
+              Show Description
+            </button>
+
+            <dialog id="my_modal_1" class="modal">
+              <div class="modal-box">
+                <h3 class="font-bold text-lg">Description</h3>
+                <p class="py-4">{{ contest.description }}</p>
+                <h3 class="font-bold text-lg">Rules</h3>
+                <p class="py-4">{{ contest.rules }}</p>
+                <h3 class="font-bold text-lg">Prizes</h3>
+                <p class="py-4">{{ contest.prizes }}</p>
+                <div class="modal-action">
+                  <form method="dialog">
+                    <!-- if there is a button in form, it will close the modal -->
+                    <button class="btn" onclick="my_modal_1_closeModal()">
+                      Close
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </dialog>
+          </td>
+          <td class="px-6 py-4">{{ contest.start_date}}</td>
+          <td class="px-6 py-4">{{ contest.end_date}}</td>
+          <td class="px-6 py-4">
             <button class="btn btn-primary">Start Contest</button>
-            </div>
-        </div>
-    </div>
-    {% endfor %}
+          </td>
+          <script>
+            function my_modal_1_showModal() {
+              var modal = document.getElementById("my_modal_1");
+              modal.showModal();
+            }
+
+            function my_modal_1_closeModal() {
+              var modal = document.getElementById("my_modal_1");
+              modal.close();
+            }
+          </script>
+
+          {% endfor %}
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 {% endblock main %}
-
