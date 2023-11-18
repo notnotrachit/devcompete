@@ -1,96 +1,106 @@
-{% extends "base.html" %}
-{% block main %}
+{% extends "base.html" %} {% block main %}
 <div>
+  <div class="w-full m-2">
+    <h3 class="font-bold mt-2 text-lg">{{ problem.name }}</h3>
+    <p>{{ problem.description }}</p>
+  </div>
 
-    {{ problem.name }}
-    <div class="flex">
-    <div id="editor">code</div>
+  <div class="flex">
+    <div id="editor"></div>
     <div id="editor2"></div>
-    </div>
+  </div>
 
-    <div class="my-5">
-        <p>STD INPUT</p>
-        <textarea class="form-control" id="stdinput" rows="3" placeholder="Input"></textarea>
-    </div>
+  <div class="my-5">
+    <p>STD INPUT</p>
+    <textarea
+      class="form-control"
+      id="stdinput"
+      rows="3"
+      placeholder="Input"
+    ></textarea>
+  </div>
 
-    <button class="btn btn-primary" id="run_btn">Run Code</button>
+  <button class="btn btn-primary" id="run_btn">Run Code</button>
 
-    <div>
-        <h3 class="text-2xl">Output</h3>
-        <div id="output"></div>
-    </div>
-
+  <div>
+    <h3 class="text-2xl">Output</h3>
+    <div id="output"></div>
+  </div>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js" integrity="sha512-B4skI5FiLurS86aioJx9VfozI1wjqrn6aTdJH+YQUmCZum/ZibPBTX55k5d9XM6EsKePDInkLVrN7vPmJxc1qA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"
+  integrity="sha512-B4skI5FiLurS86aioJx9VfozI1wjqrn6aTdJH+YQUmCZum/ZibPBTX55k5d9XM6EsKePDInkLVrN7vPmJxc1qA=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
 <script>
-    var editor = ace.edit("editor");
-    var editor2 = ace.edit("editor2");
-    editor.setTheme("ace/theme/monokai");
-    editor2.setTheme("ace/theme/monokai");
+  var editor = ace.edit("editor");
+  var editor2 = ace.edit("editor2");
+  editor.setTheme("ace/theme/monokai");
+  editor2.setTheme("ace/theme/monokai");
 
-    editor2.setReadOnly(true)
+  editor2.setReadOnly(true)
 
-    editor.getSession().setMode("ace/mode/python");
+  editor.getSession().setMode("ace/mode/python");
 
-    var submit_btn = document.getElementById("run_btn");
-    submit_btn.addEventListener("click", function() {
-        var code = editor.getValue();
-        var output = document.getElementById("output");
-        var stdinput = document.getElementById("stdinput").value;
-        output.innerHTML = "Running...";
-        FormData = {
-            "source_code": code,
-            "stdinput": stdinput,
-        }
-        var response = fetch("./", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": "{{ csrf_token }}"
-            },
-            body: JSON.stringify(FormData),
-        }).then(function(response) {
-            return response.json();
-        }).then(function(data) {
-            console.log(data.output);
-            output.innerHTML = data.output.replace(/\n/g, "<br />");
-        });
-    });
+  var submit_btn = document.getElementById("run_btn");
+  submit_btn.addEventListener("click", function() {
+      var code = editor.getValue();
+      var output = document.getElementById("output");
+      var stdinput = document.getElementById("stdinput").value;
+      output.innerHTML = "Running...";
+      FormData = {
+          "source_code": code,
+          "stdinput": stdinput,
+      }
+      var response = fetch("./", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": "{{ csrf_token }}"
+          },
+          body: JSON.stringify(FormData),
+      }).then(function(response) {
+          return response.json();
+      }).then(function(data) {
+          console.log(data.output);
+          output.innerHTML = data.output.replace(/\n/g, "<br />");
+      });
+  });
 
-    {% comment %} connect to WebSocket {% endcomment %}
 
-    var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-    var ws_path = ws_scheme + '://' + window.location.host + "/ws/chat/{{ contest.id }}/";
 
-    var socket = new ReconnectingWebSocket(ws_path);
+  var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+  var ws_path = ws_scheme + '://' + window.location.host + "/ws/chat/{{ contest.id }}/";
 
-    socket.onopen = function() {
-        console.log("Connected to chat socket");
-    };
+  var socket = new ReconnectingWebSocket(ws_path);
 
-    socket.onmessage = function(message) {
-        var data = JSON.parse(message["data"]);
-        if (data['player_number']!={{ player_number }}){
-            editor2.setValue(data['code']);
-        }
-    };
+  socket.onopen = function() {
+      console.log("Connected to chat socket");
+  };
 
-    editor.on("change", function() {
-        var code = editor.getValue();
-        socket.send(JSON.stringify({
-            "code": code
-        }));
-    });
+  socket.onmessage = function(message) {
+      var data = JSON.parse(message["data"]);
+      if (data['player_number']!={{ player_number }}){
+          editor2.setValue(data['code']);
+      }
+  };
 
+  editor.on("change", function() {
+      var code = editor.getValue();
+      socket.send(JSON.stringify({
+          "code": code
+      }));
+  });
 </script>
 <style>
-#editor {
+  #editor {
     position: relative;
-    width: 500px;
+    width: 850px;
     height: 400px;
-}
+  }
 
-#editor2 {
+  #editor2 {
     position: relative;
     width: 500px;
     height: 400px;
@@ -99,8 +109,7 @@
     -o-filter: blur(5px);
     -ms-filter: blur(5px);
     filter: blur(5px);
-    pointer-events:none;
-}
+    pointer-events: none;
+  }
 </style>
 {% endblock main %}
-
