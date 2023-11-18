@@ -36,13 +36,14 @@ class ContestView(View):
         c_problem = Problem.objects.filter(contest=contest)[0]
         # print(json.loads(request.body))
         code = json.loads(request.body.decode('utf-8'))['source_code']
-
+        stdinput = json.loads(request.body.decode('utf-8'))['stdinput']
 
         endpoint = os.getenv('JUDGE_ENDPOINT')
         endpoint += "/submissions/?base64_encoded=false&wait=true"
         data = {
             'source_code': code,
             'language_id': 71,
+            'stdin': stdinput,
         }
 
         response = requests.post(endpoint, json=data)

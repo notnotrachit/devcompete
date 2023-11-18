@@ -7,6 +7,12 @@
     <div id="editor">code</div>
     <div id="editor2"></div>
     </div>
+
+    <div class="my-5">
+        <p>STD INPUT</p>
+        <textarea class="form-control" id="stdinput" rows="3" placeholder="Input"></textarea>
+    </div>
+
     <button class="btn btn-primary" id="run_btn">Run Code</button>
 
     <div>
@@ -30,9 +36,11 @@
     submit_btn.addEventListener("click", function() {
         var code = editor.getValue();
         var output = document.getElementById("output");
+        var stdinput = document.getElementById("stdinput").value;
         output.innerHTML = "Running...";
         FormData = {
-            "source_code": code
+            "source_code": code,
+            "stdinput": stdinput,
         }
         var response = fetch("./", {
             method: "POST",
@@ -44,7 +52,8 @@
         }).then(function(response) {
             return response.json();
         }).then(function(data) {
-            output.innerHTML = data.output;
+            console.log(data.output);
+            output.innerHTML = data.output.replace(/\n/g, "<br />");
         });
     });
 
