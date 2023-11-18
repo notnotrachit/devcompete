@@ -28,6 +28,7 @@ class ContestView(View):
         return render(request, self.template_name, {
             'contest': contest,
             'problem': c_problem,
+            'player_number': 1 if request.user == contest.player1 else 2,
         })
     
     def post(self, request, *args, **kwargs):

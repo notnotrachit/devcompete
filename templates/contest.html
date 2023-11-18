@@ -3,8 +3,10 @@
 <div>
 
     {{ problem.name }}
+    <div class="flex">
     <div id="editor">code</div>
-
+    <div id="editor2"></div>
+    </div>
     <button class="btn btn-primary" id="run_btn">Run Code</button>
 
     <div>
@@ -16,7 +18,12 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js" integrity="sha512-B4skI5FiLurS86aioJx9VfozI1wjqrn6aTdJH+YQUmCZum/ZibPBTX55k5d9XM6EsKePDInkLVrN7vPmJxc1qA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
     var editor = ace.edit("editor");
+    var editor2 = ace.edit("editor2");
     editor.setTheme("ace/theme/monokai");
+    editor2.setTheme("ace/theme/monokai");
+
+    editor2.setReadOnly(true)
+
     editor.getSession().setMode("ace/mode/python");
 
     var submit_btn = document.getElementById("run_btn");
@@ -53,8 +60,10 @@
     };
 
     socket.onmessage = function(message) {
-        // var data = JSON.parse(message.data);
-        console.log(message["data"]);
+        var data = JSON.parse(message["data"]);
+        if (data['player_number']!={{ player_number }}){
+            editor2.setValue(data['code']);
+        }
     };
 
     editor.on("change", function() {
@@ -70,6 +79,18 @@
     position: relative;
     width: 500px;
     height: 400px;
+}
+
+#editor2 {
+    position: relative;
+    width: 500px;
+    height: 400px;
+    -webkit-filter: blur(5px);
+    -moz-filter: blur(5px);
+    -o-filter: blur(5px);
+    -ms-filter: blur(5px);
+    filter: blur(5px);
+    pointer-events:none;
 }
 </style>
 {% endblock main %}

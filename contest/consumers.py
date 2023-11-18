@@ -43,8 +43,14 @@ class ChatConsumer(WebsocketConsumer):
             {
                 'type': 'chat_msg',
                 'code': code,
+                'user': self.scope['user'].username,
+                'player_number': 1 if self.scope['user'] == self.contest.player1 else 2,
             },
         )
 
     def chat_msg(self, event):
-        self.send(text_data=event["code"])
+        self.send(text_data=json.dumps({
+            'code': event['code'],
+            'user': event['user'],
+            'player_number': event['player_number'],
+        }))
