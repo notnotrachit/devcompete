@@ -16,7 +16,7 @@ class ChatConsumer(WebsocketConsumer):
     def connect(self):
         self.room_name = str(self.scope['url_route']['kwargs']['room_name'])
         # get the contest
-        self.contest = Contest.objects.get(pk=1)
+        self.contest = Contest.objects.get(pk=int(self.room_name))
 
         # get the user
         user = self.scope['user']
