@@ -13,11 +13,11 @@
     </div>
 
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js" integrity="sha512-B4skI5FiLurS86aioJx9VfozI1wjqrn6aTdJH+YQUmCZum/ZibPBTX55k5d9XM6EsKePDInkLVrN7vPmJxc1qA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
     var editor = ace.edit("editor");
     editor.setTheme("ace/theme/monokai");
     editor.getSession().setMode("ace/mode/python");
-
 
     var submit_btn = document.getElementById("run_btn");
     submit_btn.addEventListener("click", function() {
@@ -40,6 +40,30 @@
             output.innerHTML = data.output;
         });
     });
+
+    {% comment %} connect to WebSocket {% endcomment %}
+
+    var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+    var ws_path = ws_scheme + '://' + window.location.host + "/ws/chat/{{ contest.id }}/";
+
+    var socket = new ReconnectingWebSocket(ws_path);
+
+    socket.onopen = function() {
+        console.log("Connected to chat socket");
+    };
+
+    socket.onmessage = function(message) {
+        // var data = JSON.parse(message.data);
+        console.log(message["data"]);
+    };
+
+    editor.on("change", function() {
+        var code = editor.getValue();
+        socket.send(JSON.stringify({
+            "code": code
+        }));
+    });
+
 </script>
 <style>
 #editor {

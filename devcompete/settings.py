@@ -34,6 +34,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,6 +48,7 @@ INSTALLED_APPS = [
     "widget_tweaks",
     'contest',
     'users',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -83,7 +85,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'devcompete.wsgi.application'
+# WSGI_APPLICATION = 'devcompete.wsgi.application'
+ASGI_APPLICATION = 'devcompete.asgi.application'
 
 
 # Database
@@ -114,6 +117,13 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer'
+    },
+}
+
 
 
 # Internationalization
