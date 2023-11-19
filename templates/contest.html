@@ -3,11 +3,41 @@
   <div class="w-full m-2">
     <h3 class="font-bold mt-2 text-lg">{{ problem.name }}</h3>
     <p>{{ problem.description }}</p>
+
+    <button class="btn btn-primary" onclick="showModal()">Test Cases</button>
+    <dialog id="my_modal_5" class="modal modal-bottom sm:modal-middle">
+      <div class="modal-box">
+        <h3 class="font-bold text-lg">Test Cases</h3>
+        <p class="py-4">{{testcase.input}}</p>
+        <p class="py-4">{{TestCase.output}}</p>
+        <div class="modal-action">
+          <form method="dialog">
+            <button class="btn" onclick="closeModal()">Close</button>
+          </form>
+        </div>
+      </div>
+    </dialog>
+    <script>
+      function showModal() {
+        var modal = document.getElementById("my_modal_5");
+        modal.showModal();
+      }
+
+      function closeModal() {
+        var modal = document.getElementById("my_modal_5");
+        modal.close();
+      }
+    </script>
   </div>
 
   <div class="flex">
-    <div id="editor"></div>
-    <div id="editor2"></div>
+    <div class="border rounded p-2 m-2">
+      <div id="editor"></div>
+    </div>
+
+    <div class="border rounded p-2 m-2">
+      <div id="editor2"></div>
+    </div>
   </div>
 
   <div class="my-5">
@@ -96,7 +126,7 @@
 <style>
   #editor {
     position: relative;
-    width: 850px;
+    width: 750px;
     height: 400px;
   }
 
@@ -110,6 +140,13 @@
     -ms-filter: blur(5px);
     filter: blur(5px);
     pointer-events: none;
+  }
+
+  /* Added style for borders */
+  .border {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 8px;
   }
 </style>
 {% endblock main %}
