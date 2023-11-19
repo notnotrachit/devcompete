@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.generic import View
-from .models import Contest, Problem
+from .models import Contest, Problem, TestCase
 from django.utils import timezone
 import os
 import requests
@@ -52,3 +52,43 @@ class ContestView(View):
             'output': response.json()['stdout'],
         }
         return JsonResponse(resp)
+    
+class ContestSubmission(View):
+    def post(self, request, *args, **kwargs):
+        contest = Contest.objects.get(pk=kwargs['id'])
+        c_problem = Problem.objects.filter(contest=contest)[0]
+        code = json.loads(request.body.decode('utf-8'))['source_code']
+
+        test_cases = TestCase.objects.filter(problem=c_problem)
+
+        final_data = {"submissions": [], "total_test_cases": len(test_cases), "passed_test_case": 0}
+        # print(final_data)
+        endpoint = os.getenv('JUDGE_ENDPOINT')
+        endpoint += "/submissions/?base64_encoded=false&wait=true"
+
+        for _ in range(len(test_cases)):
+            data = {
+                'source_code': code,
+                'language_id': 71,
+                'stdin': test_cases[_].input,
+            }
+            response = requests.post(endpoint, json=data)
+            # print(response.json())
+            user_output = response.json()['stdout']
+            if user_output.endswith('\n'):
+                user_output = user_output[:-1]
+            final_data["submissions"].append({
+                "expected_output": test_cases[_].output,
+                "user_output": user_output,
+            })
+            if user_output == test_cases[_].output:
+                final_data["passed_test_case"] += 1
+        print(f"Final Score: {final_data['passed_test_case']}/{final_data['total_test_cases']}")
+
+
+
+
+        # resp = {
+        #     'output': response.json()['stdout'],
+        # }
+        return JsonResponse({'output': 'hello'})

@@ -51,6 +51,7 @@
   </div>
 
   <button class="btn btn-primary" id="run_btn">Run Code</button>
+  <button class="btn btn-primary" id="submit_btn">Submit Code</button>
 
   <div>
     <h3 class="text-2xl">Output</h3>
@@ -73,8 +74,8 @@
 
   editor.getSession().setMode("ace/mode/python");
 
-  var submit_btn = document.getElementById("run_btn");
-  submit_btn.addEventListener("click", function() {
+  var run_btn = document.getElementById("run_btn");
+  run_btn.addEventListener("click", function() {
       var code = editor.getValue();
       var output = document.getElementById("output");
       var stdinput = document.getElementById("stdinput").value;
@@ -98,7 +99,30 @@
       });
   });
 
-
+  var submit_btn = document.getElementById("submit_btn");
+  submit_btn.addEventListener("click", function() {
+      var code = editor.getValue();
+      var output = document.getElementById("output");
+      var stdinput = document.getElementById("stdinput").value;
+      output.innerHTML = "Running...";
+      FormData = {
+          "source_code": code,
+          "stdinput": stdinput,
+      }
+      var response = fetch("./submit/", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": "{{ csrf_token }}"
+          },
+          body: JSON.stringify(FormData),
+      }).then(function(response) {
+          return response.json();
+      }).then(function(data) {
+          console.log(data.output);
+          //output.innerHTML = data.output.replace(/\n/g, "<br />");
+      });
+  });
 
   var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
   var ws_path = ws_scheme + '://' + window.location.host + "/ws/chat/{{ contest.id }}/";
