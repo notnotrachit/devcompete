@@ -52,7 +52,9 @@
           <td class="px-6 py-4">{{ contest.start_date}}</td>
           <td class="px-6 py-4">{{ contest.end_date}}</td>
           <td class="px-6 py-4">
-            <button class="btn btn-primary">Start Contest</button>
+            <a href="{% url 'contest' contest.id %}">
+              <button class="btn btn-primary">View Contest</button>
+            </a>
           </td>
           <script>
             function my_modal_1_showModal() {

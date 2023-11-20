@@ -1,6 +1,34 @@
 {% extends "base.html" %} {% block main %}
 <div>
   <div class="w-full m-2">
+    <span class="flex justify-center">
+      <div class="grid grid-flow-col gap-5 text-center auto-cols-max">
+        <div class="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
+          <span class="countdown font-mono text-5xl">
+            <span style="--value:0;"></span>
+          </span>
+          days
+        </div> 
+        <div class="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
+          <span class="countdown font-mono text-5xl">
+            <span style="--value:0;"></span>
+          </span>
+          hours
+        </div> 
+        <div class="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
+          <span class="countdown font-mono text-5xl">
+            <span style="--value:0;"></span>
+          </span>
+          min
+        </div> 
+        <div class="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
+          <span class="countdown font-mono text-5xl">
+            <span style="--value:0;"></span>
+          </span>
+          sec
+        </div>
+      </div>
+    </span>
     <h3 class="font-bold mt-2 text-lg">{{ problem.name }}</h3>
     <p>{{ problem.description }}</p>
 
@@ -27,6 +55,28 @@
         var modal = document.getElementById("my_modal_5");
         modal.close();
       }
+      var end_time = new Date("{{ end_time }}").getTime();
+      console.log(end_time);
+      var days, hours, minutes, seconds;
+      var countdown = document.getElementsByClassName("countdown");
+
+      setInterval(function() {
+        var now = new Date().getTime();
+        var distance = end_time - now;
+
+        days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        hours = Math.floor(
+          (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        );
+        minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        countdown[0].children[0].style.setProperty("--value", days);
+        countdown[1].children[0].style.setProperty("--value", hours);
+        countdown[2].children[0].style.setProperty("--value", minutes);
+        countdown[3].children[0].style.setProperty("--value", seconds);
+      }, 1000);
+    
     </script>
   </div>
 

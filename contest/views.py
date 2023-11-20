@@ -25,10 +25,13 @@ class ContestView(View):
     def get(self, request, *args, **kwargs):
         contest = Contest.objects.get(pk=kwargs['id'])
         c_problem = Problem.objects.filter(contest=contest)[0]
+        end_time = contest.end_date.strftime('%Y-%m-%dT%H:%M:%SZ')
+        print("end time" , end_time)
         return render(request, self.template_name, {
             'contest': contest,
             'problem': c_problem,
             'player_number': 1 if request.user == contest.player1 else 2,
+            'end_time': end_time,
         })
     
     def post(self, request, *args, **kwargs):
