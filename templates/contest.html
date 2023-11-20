@@ -8,8 +8,8 @@
     <dialog id="my_modal_5" class="modal modal-bottom sm:modal-middle">
       <div class="modal-box">
         <h3 class="font-bold text-lg">Test Cases</h3>
-        <p class="py-4">{{testcase.input}}</p>
-        <p class="py-4">{{TestCase.output}}</p>
+        <p class="py-4">Sample Input: {{ problem.sample_input }}</p>
+        <p class="py-4">Sample output: {{ problem.sample_output }}</p>
         <div class="modal-action">
           <form method="dialog">
             <button class="btn" onclick="closeModal()">Close</button>
@@ -120,7 +120,7 @@
           return response.json();
       }).then(function(data) {
           console.log(data.output);
-          //output.innerHTML = data.output.replace(/\n/g, "<br />");
+          output.innerHTML = data.output.replace(/\n/g, "<br />");
       });
   });
 

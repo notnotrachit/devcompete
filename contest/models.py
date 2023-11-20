@@ -31,15 +31,16 @@ class Problem(models.Model):
 
 class TestCase(models.Model):
     problem = models.ForeignKey(Problem, on_delete=models.CASCADE)
-    input = models.TextField()
+    user_input = models.TextField()
     output = models.TextField()
+    points = models.IntegerField(default=0)
 
     def __str__(self):
         return self.problem.name + " - " + str(self.pk)
 
 class Submission(models.Model):
     problem = models.ForeignKey(Problem, on_delete=models.CASCADE)
-    user = models.ForeignKey('users.Profile', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     code = models.TextField()
     status = models.CharField(max_length=100)
     score = models.IntegerField()
