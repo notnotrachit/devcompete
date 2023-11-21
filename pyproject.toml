@@ -13,6 +13,7 @@ django-allauth-ui = "^0.1.5"
 django-widget-tweaks = "^1.5.0"
 python-dotenv = "^1.0.0"
 channels = {extras = ["daphne"], version = "^4.0.0"}
+whitenoise = "^6.6.0"
 
 
 [build-system]

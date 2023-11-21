@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html data-theme="pastel">
   <head>
@@ -98,7 +100,7 @@
         <div class="dropdown dropdown-end">
           <label tabindex="0" class="btn btn-ghost btn-circle avatar">
             <div class="w-10 rounded-full">
-              <img alt="pic" src="/images/profile.jpg" />
+              <img alt="pic" src="{% static 'images/profile.jpg' %} "/>
             </div>
           </label>
           <ul
