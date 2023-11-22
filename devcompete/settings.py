@@ -28,8 +28,26 @@ SECRET_KEY = 'django-insecure-smx=65#5rdp@759n-nj2dk)(md1lwp!3*3$3gv$4d(26l-nzdu
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["https://devcompete.azurewebsites.net", "http://devcompete.azurewebsites.net","devcompete.azurewebsites.net","*"]
 
+CORS_ALLOWED_ORIGINS = ["*"]
+CSRF_TRUSTED_ORIGINS = ["https://devcompete.azurewebsites.net", "http://devcompete.azurewebsites.net"]
+if os.getenv('WEBSITE_HOSTNAME') is not None:
+    CORS_ALLOWED_ORIGINS.append('https://'+ os.environ['WEBSITE_HOSTNAME'])
+    CORS_ALLOWED_ORIGINS.append('http://'+ os.environ['WEBSITE_HOSTNAME'])
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_WHITELIST = [
+    "https://devcompete.azurewebsites.net", "http://devcompete.azurewebsites.net","devcompete.azurewebsites.net"]
+
+if os.getenv('WEBSITE_HOSTNAME') is not None:
+    CORS_ORIGIN_WHITELIST.append('https://'+ os.environ['WEBSITE_HOSTNAME'])
+    CORS_ORIGIN_WHITELIST.append('http://'+ os.environ['WEBSITE_HOSTNAME'])
+
+SECURE_SSL_REDIRECT = \
+    os.getenv('SECURE_SSL_REDIRECT', '0').lower() in ['true', 't', '1']
+if SECURE_SSL_REDIRECT:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Application definition
 
@@ -86,7 +104,7 @@ TEMPLATES = [
     },
 ]
 
-# WSGI_APPLICATION = 'devcompete.wsgi.application'
+WSGI_APPLICATION = 'devcompete.wsgi.application'
 ASGI_APPLICATION = 'devcompete.asgi.application'
 
 
@@ -94,9 +112,19 @@ ASGI_APPLICATION = 'devcompete.asgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    'ENGINE': 'django.db.backends.mysql',
+    # 'ENGINE': 'django.db.backends.postgresql',
+    'NAME': os.getenv("DB_NAME"),
+    'USER': os.getenv("DB_USER"),
+    'PASSWORD': os.getenv("DB_PASS"),
+    'HOST': os.getenv("DB_HOST"),
+    'PORT': os.getenv("DB_PORT", 3306),
+    # 'SSL': 'ENABLED'
     }
 }
 
@@ -126,7 +154,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer'
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+
+        'CONFIG': {
+            "hosts": [{
+            "address": os.getenv("REDIS_URL"),  # "REDIS_TLS_URL"
+        }],
+        },
     },
 }
 

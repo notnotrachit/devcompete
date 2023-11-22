@@ -192,9 +192,11 @@
 
   editor.on("change", function() {
       var code = editor.getValue();
-      socket.send(JSON.stringify({
-          "code": code
-      }));
+      if (socket.readyState == WebSocket.OPEN){
+        socket.send(JSON.stringify({
+            "code": code
+        }));
+    }
   });
 </script>
 <style>

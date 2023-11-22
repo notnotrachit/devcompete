@@ -15,7 +15,6 @@ class ChatConsumer(WebsocketConsumer):
 
     def connect(self):
         self.room_name = str(self.scope['url_route']['kwargs']['room_name'])
-        # get the contest
         self.contest = Contest.objects.get(pk=int(self.room_name))
 
         # get the user
@@ -29,11 +28,11 @@ class ChatConsumer(WebsocketConsumer):
             self.channel_name,
         )
 
-    # def disconnect(self, close_code):
-    #     async_to_sync(self.channel_layer.group_discard)(
-    #         self.room_name,
-    #         self.contest.name,
-    #     )
+    def disconnect(self, close_code):
+        async_to_sync(self.channel_layer.group_discard)(
+            self.room_name,
+            self.contest.name,
+        )
     def receive(self, text_data=None):
         text_data_json = json.loads(text_data)
         code = text_data_json['code']
