@@ -40,12 +40,21 @@ class ContestView(View):
         # print(json.loads(request.body))
         code = json.loads(request.body.decode('utf-8'))['source_code']
         stdinput = json.loads(request.body.decode('utf-8'))['stdinput']
+        language = json.loads(request.body.decode('utf-8'))['language'].lower()
+        print(language)
+        all_languages={
+            "python": 71,
+            "c++": 53,
+            "java": 62,
+            "javascript": 63,
+            "rust": 73,
+        }
 
         endpoint = os.getenv('JUDGE_ENDPOINT')
         endpoint += "/submissions/?base64_encoded=false&wait=true"
         data = {
             'source_code': code,
-            'language_id': 71,
+            'language_id': all_languages[language],
             'stdin': stdinput,
         }
 

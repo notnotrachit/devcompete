@@ -79,7 +79,18 @@
     
     </script>
   </div>
-
+  <div class="form-control w-full max-w-xs">
+    <label class="label">
+      <span class="label-text">Language</span>
+    </label>
+    <select class="select select-bordered" id="lang_selector">
+      <option>Python</option>
+      <option>Javascript</option>
+      <option>Java</option>
+      <option>C++</option>
+      <option>Rust</option>
+    </select>
+  </div>
   <div class="flex">
     <div class="border rounded p-2 m-2">
       <div id="editor"></div>
@@ -129,10 +140,12 @@
       var code = editor.getValue();
       var output = document.getElementById("output");
       var stdinput = document.getElementById("stdinput").value;
+      var language = document.getElementById("lang_selector").value;
       output.innerHTML = "Running...";
       FormData = {
           "source_code": code,
           "stdinput": stdinput,
+          "language": language,          
       }
       var response = fetch("./", {
           method: "POST",
@@ -154,10 +167,12 @@
       var code = editor.getValue();
       var output = document.getElementById("output");
       var stdinput = document.getElementById("stdinput").value;
+      var language = document.getElementById("lang_selector").value;
       output.innerHTML = "Running...";
       FormData = {
           "source_code": code,
           "stdinput": stdinput,
+          "language": language,
       }
       var response = fetch("./submit/", {
           method: "POST",
