@@ -100,10 +100,4 @@ class ContestSubmission(View):
         
         print(f"Final Score: {final_data['passed_test_case']}/{final_data['total_test_cases']}")
 
-
-
-
-        # resp = {
-        #     'output': response.json()['stdout'],
-        # }
         return JsonResponse({'output': f"Final Score: {final_data['passed_test_case']}/{final_data['total_test_cases']}"})
