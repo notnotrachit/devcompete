@@ -6,8 +6,18 @@ from django.utils import timezone
 import os
 import requests
 import json
+import google.generativeai as palm
+
+palm.configure(api_key=os.environ['PALM_API_KEY'])
 # Create your views here.
 
+all_languages={
+    "python": 71,
+    "c++": 53,
+    "java": 62,
+    "javascript": 63,
+    "rust": 73,
+}
 
 class Contests(View):
     template_name = "contests.html"
@@ -42,13 +52,7 @@ class ContestView(View):
         stdinput = json.loads(request.body.decode('utf-8'))['stdinput']
         language = json.loads(request.body.decode('utf-8'))['language'].lower()
         print(language)
-        all_languages={
-            "python": 71,
-            "c++": 53,
-            "java": 62,
-            "javascript": 63,
-            "rust": 73,
-        }
+
 
         endpoint = os.getenv('JUDGE_ENDPOINT')
         endpoint += "/submissions/?base64_encoded=false&wait=true"
@@ -70,8 +74,9 @@ class ContestSubmission(View):
         contest = Contest.objects.get(pk=kwargs['id'])
         c_problem = Problem.objects.filter(contest=contest)[0]
         code = json.loads(request.body.decode('utf-8'))['source_code']
-        submission = Submission.objects.create(problem=c_problem, user=request.user, code=code, status="In Queue", score=0, language="Python")
-
+        language = json.loads(request.body.decode('utf-8'))['language']
+        submission = Submission.objects.create(problem=c_problem, user=request.user, code=code, status="In Queue", score=0, language=language)
+        
         test_cases = TestCase.objects.filter(problem=c_problem)
 
         final_data = {"submissions": [], "total_test_cases": len(test_cases), "passed_test_case": 0}
@@ -84,9 +89,9 @@ class ContestSubmission(View):
                 'source_code': code,
                 'language_id': 71,
                 'stdin': test_cases[_].user_input,
+                'language_id': all_languages[language.lower()],
             }
             response = requests.post(endpoint, json=data)
-            # print(response.json())
             user_output = response.json()['stdout']
             if user_output.endswith('\n'):
                 user_output = user_output[:-1]
@@ -99,5 +104,43 @@ class ContestSubmission(View):
             score += test_cases[_].points
         
         print(f"Final Score: {final_data['passed_test_case']}/{final_data['total_test_cases']}")
-
+        submission.score = score
+        submission.status = "Accepted" if final_data['passed_test_case'] == final_data['total_test_cases'] else "Wrong Answer"
+        submission.save()
         return JsonResponse({'output': f"Final Score: {final_data['passed_test_case']}/{final_data['total_test_cases']}"})
+    
+
+class ResultView(View):
+    template_name = "result.html"
+
+    def get(self, request, *args, **kwargs):
+        contest = Contest.objects.get(pk=kwargs['id'])
+        c_problem = Problem.objects.filter(contest=contest)[0]
+        submission_player1 = Submission.objects.filter(problem=c_problem).filter(user=contest.player1).order_by('-score')[0]
+        submission_player2 = Submission.objects.filter(problem=c_problem).filter(user=contest.player2).order_by('-score')[0]
+        winner = None
+        if len(submission_player1) == 0 and len(submission_player2) == 0:
+            winner = None
+        elif len(submission_player1) == 0:
+            winner = contest.player2
+        elif len(submission_player2) == 0:
+            winner = contest.player1
+        elif submission_player1.score > submission_player2.score:
+            winner = contest.player1
+        elif submission_player1.score < submission_player2.score:
+            winner = contest.player2
+        elif submission_player1.score == submission_player2.score:
+            winner = contest.player1 if submission_player1.time < submission_player2.time else contest.player2
+        
+        if contest.ai_result_analysis is None:
+            prompt = f"There is a coding contest between 2 players. The question was '{c_problem.description}'. Player 1 is {contest.player1.username} and Player 2 is {contest.player2.username}. The result of the contest is '{winner.username}'. {contest.player1.username}'s code is {submission_player1.code} and {contest.player2.username}'s code is {submission_player2.code}. Now analyze the code and give me proper analyses on which code is better and why?."
+            contest.ai_result_analysis = palm.generate_text(prompt=prompt).result
+            contest.save()
+
+        return render(request, self.template_name, {
+            'contest': contest,
+            'problem': c_problem,
+            'submissions_player1': submission_player1,
+            'submissions_player2': submission_player2,
+            'winner': winner,
+        })

@@ -11,7 +11,7 @@ class Contest(models.Model):
     prizes = models.TextField()
     player1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player1', null=True, blank=True)
     player2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player2', null=True, blank=True)
-
+    ai_result_analysis = models.TextField(null=True, blank=True)
     def __str__(self):
         return self.name
     

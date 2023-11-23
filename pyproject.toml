@@ -20,6 +20,7 @@ channels-redis = "^4.1.0"
 daphne = "^4.0.0"
 uvicorn = "^0.24.0.post1"
 hypercorn = "^0.15.0"
+google-generativeai = "^0.2.2"
 
 
 [build-system]
