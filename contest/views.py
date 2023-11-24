@@ -116,8 +116,8 @@ class ResultView(View):
     def get(self, request, *args, **kwargs):
         contest = Contest.objects.get(pk=kwargs['id'])
         c_problem = Problem.objects.filter(contest=contest)[0]
-        submission_player1 = Submission.objects.filter(problem=c_problem).filter(user=contest.player1).order_by('-score')[0]
-        submission_player2 = Submission.objects.filter(problem=c_problem).filter(user=contest.player2).order_by('-score')[0]
+        submission_player1 = Submission.objects.filter(problem=c_problem).filter(user=contest.player1).order_by('-score')
+        submission_player2 = Submission.objects.filter(problem=c_problem).filter(user=contest.player2).order_by('-score')
         winner = None
         if len(submission_player1) == 0 and len(submission_player2) == 0:
             winner = None
@@ -125,16 +125,18 @@ class ResultView(View):
             winner = contest.player2
         elif len(submission_player2) == 0:
             winner = contest.player1
-        elif submission_player1.score > submission_player2.score:
+        elif submission_player1[0].score > submission_player2[0].score:
             winner = contest.player1
-        elif submission_player1.score < submission_player2.score:
+        elif submission_player1[0].score < submission_player2[0].score:
             winner = contest.player2
-        elif submission_player1.score == submission_player2.score:
-            winner = contest.player1 if submission_player1.time < submission_player2.time else contest.player2
+        elif submission_player1[0].score == submission_player2[0].score:
+            winner = contest.player1 if submission_player1[0].time < submission_player2[0].time else contest.player2
         
-        if contest.ai_result_analysis is None:
-            prompt = f"There is a coding contest between 2 players. The question was '{c_problem.description}'. Player 1 is {contest.player1.username} and Player 2 is {contest.player2.username}. The result of the contest is '{winner.username}'. {contest.player1.username}'s code is {submission_player1.code} and {contest.player2.username}'s code is {submission_player2.code}. Now analyze the code and give me proper analyses on which code is better and why?."
-            contest.ai_result_analysis = palm.generate_text(prompt=prompt).result
+        if contest.ai_result_analysis is None or contest.ai_result_analysis == "":
+            prompt = f"There is a coding contest between 2 players. The question was '{c_problem.description}'. Player 1 is {contest.player1.username} and Player 2 is {contest.player2.username}. The result of the contest is '{winner.username}'. {contest.player1.username}'s code is {submission_player1[0].code} and {contest.player2.username}'s code is {submission_player2[0].code}. Now analyze the code and give me proper analyses on which code is better and why?."
+            ai_analysis = palm.generate_text(prompt=prompt).result
+            print(ai_analysis)
+            contest.ai_result_analysis = ai_analysis
             contest.save()
 
         return render(request, self.template_name, {

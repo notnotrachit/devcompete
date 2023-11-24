@@ -28,11 +28,11 @@ class ChatConsumer(WebsocketConsumer):
             self.channel_name,
         )
 
-    def disconnect(self, close_code):
-        async_to_sync(self.channel_layer.group_discard)(
-            self.room_name,
-            self.contest.name,
-        )
+    # def disconnect(self, close_code):
+    #     async_to_sync(self.channel_layer.group_discard)(
+    #         self.room_name,
+    #         self.contest.name,
+    #     )
     def receive(self, text_data=None):
         text_data_json = json.loads(text_data)
         code = text_data_json['code']
