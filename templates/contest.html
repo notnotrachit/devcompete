@@ -128,6 +128,7 @@
 <script>
   var editor = ace.edit("editor");
   var editor2 = ace.edit("editor2");
+  var l_selector = document.getElementById("lang_selector");
   editor.setTheme("ace/theme/monokai");
   editor2.setTheme("ace/theme/monokai");
 
@@ -212,6 +213,21 @@
             "code": code
         }));
     }
+  });
+
+  l_selector.addEventListener("change", function() {
+      var lang = l_selector.value;
+      if (lang == "Python") {
+          editor.getSession().setMode("ace/mode/python");
+      } else if (lang == "Javascript") {
+          editor.getSession().setMode("ace/mode/javascript");
+      } else if (lang == "Java") {
+          editor.getSession().setMode("ace/mode/java");
+      } else if (lang == "C++") {
+          editor.getSession().setMode("ace/mode/c_cpp");
+      } else if (lang == "Rust") {
+          editor.getSession().setMode("ace/mode/rust");
+      }
   });
 </script>
 <style>
