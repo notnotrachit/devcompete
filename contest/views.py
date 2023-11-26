@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.views.generic import View
 from .models import Contest, Problem, TestCase, Submission
@@ -146,3 +146,31 @@ class ResultView(View):
             'submissions_player2': submission_player2,
             'winner': winner,
         })
+    
+
+class CreateContest(View):
+    template_name = "create-contest.html"
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_superuser:
+            return render(request, self.template_name, {
+                
+            })
+        else:
+            return redirect('home')
+    
+    def post(self, request, *args, **kwargs):
+        print(request.POST)
+        player1 = request.user
+        player2 = request.POST['player2']
+        start_date = request.POST['start_date']
+        end_date = request.POST['end_date']
+        problem = request.POST['problem']
+        description = request.POST['description']
+        points = request.POST['points']
+        user_input = request.POST['user_input']
+        output = request.POST['output']
+        contest = Contest.objects.create(player1=player1, player2=player2, start_date=start_date, end_date=end_date)
+        problem = Problem.objects.create(contest=contest, description=description, points=points)
+        TestCase.objects.create(problem=problem, user_input=user_input, output=output)
+        return JsonResponse({'status': 'success'})

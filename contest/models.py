@@ -76,3 +76,14 @@ class ContestSubmission(models.Model):
         return self.contest.name + " - " + self.submission.problem.name + " - " + str(self.pk)
 
 
+class Results(models.Model):
+    contest = models.ForeignKey(Contest, on_delete=models.CASCADE)
+    player1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player1_result')
+    player2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player2_result')
+    winner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='winner')
+    player1_score = models.IntegerField()
+    player2_score = models.IntegerField()
+    time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.contest.name + " - " + str(self.pk)

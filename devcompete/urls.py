@@ -17,13 +17,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from .views import MyView
-from contest.views import Contests, ContestView, ContestSubmission, ResultView
+from contest.views import Contests, ContestView, ContestSubmission, ResultView, CreateContest
+from django.contrib.auth.decorators import login_required
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
     path('', MyView.as_view(), name='home'),
-    path('contests/', Contests.as_view(), name='contests'),
-    path('contest/<int:id>/', ContestView.as_view(), name='contest'),
-    path('contest/<int:id>/submit/', ContestSubmission.as_view(), name='contest-submit'),
-    path('contest/<int:id>/result/', ResultView.as_view(), name='contest-result'),
+    path('contests/', login_required(Contests.as_view()), name='contests'),
+    path('contest/<int:id>/', login_required(ContestView.as_view()), name='contest'),
+    path('contest/<int:id>/submit/', login_required(ContestSubmission.as_view()), name='contest-submit'),
+    path('contest/<int:id>/result/', login_required(ResultView.as_view()), name='contest-result'),
+    path('create-contest/', login_required(CreateContest.as_view()), name='create-contest'),
 ]
