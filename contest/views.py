@@ -1,14 +1,12 @@
-import json
-import os
-
-import google.generativeai as palm
-import requests
-from django.http import JsonResponse
 from django.shortcuts import render
-from django.utils import timezone
+from django.http import JsonResponse
 from django.views.generic import View
-
-from .models import Contest, Problem, Submission, TestCase
+from .models import Contest, Problem, TestCase, Submission
+from django.utils import timezone
+import os
+import requests
+import json
+import google.generativeai as palm
 
 palm.configure(api_key=os.environ['PALM_API_KEY'])
 # Create your views here.
@@ -135,8 +133,7 @@ class ResultView(View):
             winner = contest.player1 if submission_player1[0].time < submission_player2[0].time else contest.player2
         
         if contest.ai_result_analysis is None or contest.ai_result_analysis == "":
-            prompt = f"There is a coding contest between 2 players. The question was '{c_problem.description}'. Player 1 is {contest.player1.username} and Player 2 is {contest.player2.username}. The result of the contest is '{winner.username}'. {contest.player1.username}'s code and {contest.player2.username}'s code are provided for analysis. Now, analyze the code and give me a comprehensive report on which code is better and why. Please provide your analysis in bullet points, aiming to assist the judges in evaluating the code and explaining to others why the code of the winner is superior to the other player. Ensure that the code itself is not included in the analysis."
-
+            prompt = f"There is a coding contest between 2 players. The question was '{c_problem.description}'. Player 1 is {contest.player1.username} and Player 2 is {contest.player2.username}. The result of the contest is '{winner.username}'. {contest.player1.username}'s code is {submission_player1[0].code} and {contest.player2.username}'s code is {submission_player2[0].code}. Now analyze the code and give me proper analyses on which code is better and why?."
             ai_analysis = palm.generate_text(prompt=prompt).result
             print(ai_analysis)
             contest.ai_result_analysis = ai_analysis
