@@ -103,16 +103,49 @@
 
   <div class="my-5">
     <p>STD INPUT</p>
-    <textarea
+    {% comment %} <textarea
       class="form-control"
       id="stdinput"
       rows="3"
       placeholder="Input"
-    ></textarea>
+    ></textarea> {% endcomment %}
   </div>
 
-  <button class="btn btn-primary" id="run_btn">Run Code</button>
+  <button class="btn btn-primary" onclick="run_code.showModal()">Run Code</button>
   <button class="btn btn-primary" id="submit_btn">Submit Code</button>
+
+
+  <dialog id="run_code" class="modal modal-bottom sm:modal-middle">
+    <div class="modal-box">
+      <div class="font-bold text-lg flex justify-between">
+        <span>Run Code</span>
+        <form method="dialog">
+          <button class="btn btn-error text-xs leading-none">✖</button>
+        </form>
+      </div>
+      <div class="form-control">
+        <label class="label cursor-pointer justify-start">
+          <span class="label-text">Want to add custom input?</span> 
+          <input type="checkbox" class="form-control checkbox checkbox-primary mx-5" id="custom_input"/>
+        </label>
+      </div>
+      {% comment %} Want to add custom input to your code? {% endcomment %}
+      {% comment %} <input type="checkbox" checked="checked" class="checkbox" /> {% endcomment %}
+      {% comment %} <input type="checkbox" id="custom_input" class="checkbox checkbox-primary"/> {% endcomment %}
+      <div id="custom_input_div" class="hidden">
+        <textarea
+          class="form-control textarea textarea-bordered"
+          id="stdinput"
+          rows="3"
+          placeholder="Input"
+        ></textarea>
+      </div>
+      <div class="modal-action">
+          <button class="btn" id="run_btn">Run Code</button>
+      </div>
+    </div>
+  </dialog>
+
 
   <div>
     <h3 class="text-2xl">Output</h3>
@@ -129,6 +162,7 @@
   var editor = ace.edit("editor");
   var editor2 = ace.edit("editor2");
   var l_selector = document.getElementById("lang_selector");
+  var custom_input = document.getElementById("custom_input");
   editor.setTheme("ace/theme/monokai");
   editor2.setTheme("ace/theme/monokai");
 
@@ -136,8 +170,18 @@
 
   editor.getSession().setMode("ace/mode/python");
 
+  custom_input.addEventListener("change", function() {
+      var custom_input_div = document.getElementById("custom_input_div");
+      if (custom_input.checked) {
+          custom_input_div.classList.remove("hidden");
+      } else {
+          custom_input_div.classList.add("hidden");
+      }
+  });
+
   var run_btn = document.getElementById("run_btn");
   run_btn.addEventListener("click", function() {
+      run_code.close();
       var code = editor.getValue();
       var output = document.getElementById("output");
       var stdinput = document.getElementById("stdinput").value;
