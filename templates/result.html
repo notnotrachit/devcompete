@@ -1,6 +1,9 @@
-{% extends "base.html" %}
-{% block main %}
-<div class="m-10 text-6xl text-primary">
-    {{ winner.username }} won!
+{% extends "base.html" %} {% block main %}
+<div class="m-10 text-6xl text-primary">{{ winner.username }} won!</div>
+
+<div class="m-10">
+  <span class="text-4xl text-primary">Analysis:</span><br>
+  <span class="text-2xl">{{ contest.ai_result_analysis }}</span>
 </div>
+
 {% endblock main %}
