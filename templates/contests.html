@@ -1,6 +1,24 @@
 {% extends "base.html" %} {% block main %}
 <div>
-  <div class="relative overflow-x-auto shadow-md sm:rounded-lg mx-5 my-10">
+
+  <div class="flex flex-wrap gap-4 m-10">
+    {% for contest in current_contests %}
+    <div class="card w-96 bg-primary text-primary-content">
+      <div class="card-body">
+        <h2 class="card-title">{{ contest.name }}</h2>
+        <p>Start Time: {{ contest.start_date }}<br>End Time: {{ contest.end_date }}</p>
+        <div class="card-actions justify-between">
+          <button class="btn" onclick="showModal('{{ contest.id }}')">Show Details</button>
+          <a href="{% url 'contest' contest.id %}">
+          <button class="btn">View Contest</button>
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="relative overflow-x-auto shadow-md sm:rounded-lg mx-5 my-10 hidden">
     <table
       class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
     >
