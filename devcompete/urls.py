@@ -19,6 +19,8 @@ from django.urls import path, include
 from .views import MyView
 from contest.views import Contests, ContestView, ContestSubmission, ResultView, CreateContest, EndContest
 from django.contrib.auth.decorators import login_required
+from django.views.generic import RedirectView
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,4 +32,5 @@ urlpatterns = [
     path('contest/<int:id>/result/', login_required(ResultView.as_view()), name='contest-result'),
     path('create-contest/', login_required(CreateContest.as_view()), name='create-contest'),
     path('end-contest/<int:id>/', login_required(EndContest.as_view()), name='end-contest'),
+    path('accounts/profile/', RedirectView.as_view(url='/')),
 ]
