@@ -110,7 +110,7 @@ class ContestSubmission(View):
                 "expected_output": test_cases[_].output,
                 "user_output": user_output,
             })
-            if user_output == test_cases[_].output:
+            if user_output == test_cases[_].output.replace('\r', ''):
                 final_data["passed_test_case"] += 1
             score += test_cases[_].points
         
