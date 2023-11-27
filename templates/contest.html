@@ -154,11 +154,20 @@
     </div>
   </dialog>
 
+  <dialog id="output_modal" class="modal modal-bottom sm:modal-middle ">
+    <div class="modal-box border border-2 border-primary">
+      <div class="font-bold text-lg flex justify-between">
+        <span>Output</span>
+        <form method="dialog">
+          <button class="btn btn-error text-xs leading-none">✖</button>
+        </form>
+      </div>
+      <div id="output_result">
 
-  <div>
-    <h3 class="text-2xl">Output</h3>
-    <div id="output"></div>
-  </div>
+      </div>
+    </div>
+  </dialog>
+
 </div>
 <script
   src="https://cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"
@@ -190,11 +199,14 @@
   var run_btn = document.getElementById("run_btn");
   run_btn.addEventListener("click", function() {
       run_code.close();
+      output_modal.showModal();
       var code = editor.getValue();
-      var output = document.getElementById("output");
+      var output = document.getElementById("output_result");
       var stdinput = document.getElementById("stdinput").value;
       var language = document.getElementById("lang_selector").value;
-      output.innerHTML = "Running...";
+      output.classList.toggle("loading");
+      output.classList.toggle("loading-infinity");
+      output.classList.toggle("loading-lg");
       FormData = {
           "source_code": code,
           "stdinput": stdinput,
@@ -211,6 +223,9 @@
           return response.json();
       }).then(function(data) {
           console.log(data.output);
+          output.classList.toggle("loading");
+          output.classList.toggle("loading-infinity");
+          output.classList.toggle("loading-lg");
           output.innerHTML = data.output.replace(/\n/g, "<br />");
       });
   });
