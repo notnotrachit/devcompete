@@ -65,6 +65,7 @@ class ContestView(View):
             'source_code': code,
             'language_id': all_languages[language],
             'stdin': stdinput,
+            'redirect_stderr_to_stdout': True,
         }
 
         response = requests.post(endpoint, json=data)
@@ -101,6 +102,7 @@ class ContestSubmission(View):
                 'language_id': 71,
                 'stdin': test_cases[_].user_input,
                 'language_id': all_languages[language.lower()],
+                'redirect_stderr_to_stdout': True,
             }
             response = requests.post(endpoint, json=data)
             user_output = response.json()['stdout']
