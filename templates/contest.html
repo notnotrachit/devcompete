@@ -232,11 +232,14 @@
 
   var submit_btn = document.getElementById("submit_btn");
   submit_btn.addEventListener("click", function() {
+      output_modal.showModal();
       var code = editor.getValue();
-      var output = document.getElementById("output");
+      var output = document.getElementById("output_result");
+      output.classList.toggle("loading");
+      output.classList.toggle("loading-infinity");
+      output.classList.toggle("loading-lg");
       var stdinput = document.getElementById("stdinput").value;
       var language = document.getElementById("lang_selector").value;
-      output.innerHTML = "Running...";
       FormData = {
           "source_code": code,
           "stdinput": stdinput,
@@ -253,6 +256,9 @@
           return response.json();
       }).then(function(data) {
           console.log(data.output);
+          output.classList.toggle("loading");
+          output.classList.toggle("loading-infinity");
+          output.classList.toggle("loading-lg");
           output.innerHTML = data.output.replace(/\n/g, "<br />");
       });
   });
