@@ -1,7 +1,8 @@
 {% extends "base.html" %} {% block main %}
 <div>
   <div class=" m-2">
-    <span class="flex justify-center">
+    <span class="flex">
+      <div class="flex justify-center w-full">
       <div class="grid grid-flow-col gap-5 text-center auto-cols-max">
         <div class="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
           <span class="countdown font-mono text-5xl">
@@ -27,6 +28,13 @@
           </span>
           sec
         </div>
+      </div>
+      </div>
+      <div class="justify-self-end">
+        <form method="POST" action="{% url 'end-contest' contest.id %}">
+          {% csrf_token %}
+          <button class="btn btn-error">End Contest</button>
+        </form>
       </div>
     </span>
     <h3 class="font-bold mt-2 text-lg">{{ problem.name }}</h3>

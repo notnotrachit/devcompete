@@ -7,6 +7,7 @@ import os
 import requests
 import json
 import google.generativeai as palm
+from django.contrib.auth.models import User
 
 palm.configure(api_key=os.environ['PALM_API_KEY'])
 # Create your views here.
@@ -34,6 +35,8 @@ class ContestView(View):
 
     def get(self, request, *args, **kwargs):
         contest = Contest.objects.get(pk=kwargs['id'])
+        if request.user != contest.player1 and request.user != contest.player2:
+            return redirect('home')
         c_problem = Problem.objects.filter(contest=contest)[0]
         end_time = contest.end_date.strftime('%Y-%m-%dT%H:%M:%SZ')
         print("end time" , end_time)
@@ -47,6 +50,8 @@ class ContestView(View):
     def post(self, request, *args, **kwargs):
         contest = Contest.objects.get(pk=kwargs['id'])
         c_problem = Problem.objects.filter(contest=contest)[0]
+        if request.user != contest.player1 and request.user != contest.player2:
+            return redirect('home')
         # print(json.loads(request.body))
         code = json.loads(request.body.decode('utf-8'))['source_code']
         stdinput = json.loads(request.body.decode('utf-8'))['stdinput']
@@ -72,15 +77,21 @@ class ContestView(View):
 class ContestSubmission(View):
     def post(self, request, *args, **kwargs):
         contest = Contest.objects.get(pk=kwargs['id'])
+        user = request.user
+        if user != contest.player1 and user != contest.player2:
+            return redirect('home')
+        if request.user == contest.player1:
+            if contest.player1_submitted == True:
+                return redirect('contest-result', id=contest.pk)
+        elif request.user == contest.player2:
+            if contest.player2_submitted == True:
+                return redirect('contest-result', id=contest.pk)
         c_problem = Problem.objects.filter(contest=contest)[0]
         code = json.loads(request.body.decode('utf-8'))['source_code']
         language = json.loads(request.body.decode('utf-8'))['language']
         submission = Submission.objects.create(problem=c_problem, user=request.user, code=code, status="In Queue", score=0, language=language)
-        
         test_cases = TestCase.objects.filter(problem=c_problem)
-
         final_data = {"submissions": [], "total_test_cases": len(test_cases), "passed_test_case": 0}
-        # print(final_data)
         endpoint = os.getenv('JUDGE_ENDPOINT')
         endpoint += "/submissions/?base64_encoded=false&wait=true"
         score=0
@@ -115,6 +126,10 @@ class ResultView(View):
 
     def get(self, request, *args, **kwargs):
         contest = Contest.objects.get(pk=kwargs['id'])
+        if request.user != contest.player1 and request.user != contest.player2:
+            return redirect('home')
+        if contest.player1_submitted == False or contest.player2_submitted == False:
+            return render(request, "result_wait.html")
         c_problem = Problem.objects.filter(contest=contest)[0]
         submission_player1 = Submission.objects.filter(problem=c_problem).filter(user=contest.player1).order_by('-score')
         submission_player2 = Submission.objects.filter(problem=c_problem).filter(user=contest.player2).order_by('-score')
@@ -161,8 +176,18 @@ class CreateContest(View):
     
     def post(self, request, *args, **kwargs):
         print(request.POST)
-        player1 = request.user
-        player2 = request.POST['player2']
+        player1_username = request.POST['player1']
+        player2_username = request.POST['player2']
+        player1 = None
+        player2 = None
+        try:
+            player1 = User.objects.get(username=player1_username)
+        except:
+            return JsonResponse({'status': 'failure', 'message': 'Player 1 does not exist'})
+        try:
+            player2 = User.objects.get(username=player2_username)
+        except:
+            return JsonResponse({'status': 'failure', 'message': 'Player 2 does not exist'})
         start_date = request.POST['start_date']
         end_date = request.POST['end_date']
         problem = request.POST['problem']
@@ -174,3 +199,17 @@ class CreateContest(View):
         problem = Problem.objects.create(contest=contest, description=description, points=points)
         TestCase.objects.create(problem=problem, user_input=user_input, output=output)
         return JsonResponse({'status': 'success'})
+    
+
+class EndContest(View):
+    def post(self, request, *args, **kwargs):
+        contest = Contest.objects.get(pk=kwargs['id'])
+        user = request.user
+        if user != contest.player1 and user != contest.player2:
+            return redirect('home')
+        if request.user == contest.player1:
+            contest.player1_submitted = True
+        elif request.user == contest.player2:
+            contest.player2_submitted = True
+        contest.save()
+        return redirect('contest-result', id=contest.pk)
