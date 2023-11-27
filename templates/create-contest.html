@@ -1,7 +1,30 @@
 {% extends "base.html" %} {% block main %}
 <div>
-    <div>
-        
+  <div>
+    <div class="container mx-auto flex">
+    <div class="w-1/2 pr-8 flex-col">
+      <label for="contest_name" class="block text-gray-700 text-sm font-bold mb-2">Contest Name:</label>
+      <label for="start_datetime" class="block text-gray-700 text-sm font-bold mb-2 mt-4">Start Date and Time:</label>
+      <label for="finish_datetime" class="block text-gray-700 text-sm font-bold mb-2 mt-4">Finish Date and Time:</label>
+      <label for="description" class="block text-gray-700 text-sm font-bold mb-2 mt-4">Description:</label>
+      <label for="rules" class="block text-gray-700 text-sm font-bold mb-2 mt-4">Rules:</label>
+      <label for="prices" class="block text-gray-700 text-sm font-bold mb-2 mt-4">Prices:</label>
+      <label for="assigning_contest" class="block text-gray-700 text-sm font-bold mb-2 mt-4">Assigning Contest:</label>
     </div>
+    <div class="w-1/2 pl-8 flex-col">
+      <input type="text" id="contest_name" name="contest_name" class="w-full px-3 py-2 border rounded shadow appearance-none mb-4" required>
+      <input type="datetime-local" id="start_datetime" name="start_datetime" class="w-full px-3 py-2 border rounded shadow appearance-none mb-4" required>
+      <input type="datetime-local" id="finish_datetime" name="finish_datetime" class="w-full px-3 py-2 border rounded shadow appearance-none mb-4" required>
+      <textarea id="description" name="description" rows="4" class="w-full px-3 py-2 border rounded shadow appearance-none mb-4" required></textarea>
+      <textarea id="rules" name="rules" rows="4" class="w-full px-3 py-2 border rounded shadow appearance-none mb-4" required></textarea>
+      <input type="text" id="prices" name="prices" class="w-full px-3 py-2 border rounded shadow appearance-none mb-4" required>
+      <input type="text" id="assigning_contest" name="assigning_contest" class="w-full px-3 py-2 border rounded shadow appearance-none mb-4" required>
+    </div>
+  </div>
+
+  <div class="flex items-center justify-between mt-4">
+    <button onclick="submitForm()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Create Contest</button>
+  </div>
+  </div>
 </div>
 {% endblock %}
