@@ -2,121 +2,160 @@
 <div>
   <div class="m-12">
     <h1 class="text-2xl font-bold m-8">Create Contest</h1>
-    <div class="container mx-auto flex-row">
-      <div class="w-1/2 pr-8 flex-col">
-        <label
-          for="contest_name"
-          class="block text-gray-700 text-sm font-bold mb-2"
-          >Contest Name:</label
-        >
-        <input
-          type="text"
-          id="contest_name"
-          name="contest_name"
-          class="w-full px-3 py-2 border rounded shadow appearance-none mb-4"
-          required
-        />
+    <form id="createContestForm">
+      <div class="container mx-auto flex-row">
+        <div class="pr-8 flex-col form-control">
+          <label
+            for="contest_name"
+            class="block text-primary text-sm font-bold mb-2"
+            >Contest Name:</label
+          >
+          <input
+            id="contest_name"
+            name="contest_name"
+            placeholder="Contest name"
+            class="input input-bordered input-primary w-full max-w-xs mb-4"
+            required
+          />
+        </div>
+
+        <div class="pr-8 flex-col form-control">
+          <label
+            for="start_datetime"
+            class="block text-primary text-sm font-bold mb-2 mt-4"
+            >Start Date and Time:</label
+          >
+          <input
+            id="start_datetime"
+            name="start_datetime"
+            class="input input-bordered input-primary w-full max-w-xs mb-4"
+            required
+          />
+        </div>
+
+        <div class="pr-8 flex-col form-control">
+          <label
+            for="finish_datetime"
+            class="block text-primary text-sm font-bold mb-2 mt-4"
+            >Finish Date and Time:</label
+          >
+          <input
+            id="finish_datetime"
+            name="finish_datetime"
+            class="input input-bordered input-primary w-full max-w-xs mb-4"
+            required
+          />
+        </div>
+
+        <div class="pr-8 flex-col form-control">
+          <label
+            for="description"
+            class="block text-primary text-sm font-bold mb-2 mt-4"
+            >Description:</label
+          >
+          <textarea
+            id="description"
+            name="description"
+            rows="4"
+            class="textarea textarea-bordered textarea-primary textarea-lg w-full max-w-xs"
+            required
+          ></textarea>
+        </div>
+
+        <div class="pr-8 flex-col form-control">
+          <label
+            for="rules"
+            class="block text-primary textarea-primary text-sm font-bold mb-2 mt-4"
+            >Rules:</label
+          >
+          <textarea
+            id="rules"
+            name="rules"
+            rows="4"
+            class="textarea textarea-bordered textarea-primary textarea-lg w-full max-w-xs"
+            required
+          ></textarea>
+        </div>
+
+        <div class="pr-8 flex-col form-control">
+          <label
+            for="prices"
+            class="block text-primary text-sm font-bold mb-2 mt-4"
+            >Prices:</label
+          >
+          <textarea
+            id="prices"
+            name="prices"
+            class="textarea textarea-bordered textarea-primary textarea-lg w-full max-w-xs"
+            required
+          ></textarea>
+        </div>
+
+        <div class="pr-8 flex-col form-control">
+          <label
+            for="assigning_contest"
+            class="block text-primary text-sm font-bold mb-2 mt-4"
+            >Assigning Contest:</label
+          >
+          <div class="form-control w-full max-w-xs">
+            <label class="label">
+              <span class="label-text">Player One</span>
+            </label>
+            <select
+              class="select select-bordered select-primary"
+              name="player_one"
+            >
+              <option disabled selected>Select Player 1</option>
+              <option>Star Wars</option>
+              <option>Harry Potter</option>
+              <option>Lord of the Rings</option>
+              <option>Planet of the Apes</option>
+              <option>Star Trek</option>
+            </select>
+          </div>
+
+          <div class="form-control w-full max-w-xs">
+            <label class="label">
+              <span class="label-text">Player Two</span>
+            </label>
+            <select
+              class="select select-bordered select-primary"
+              name="player_two"
+            >
+              <option disabled selected>Select Player 2</option>
+              <option>Star Wars</option>
+              <option>Harry Potter</option>
+              <option>Lord of the Rings</option>
+              <option>Planet of the Apes</option>
+              <option>Star Trek</option>
+            </select>
+          </div>
+        </div>
       </div>
 
-      <div class="w-1/2 pr-8 flex-col">
-        <label
-          for="start_datetime"
-          class="block text-gray-700 text-sm font-bold mb-2 mt-4"
-          >Start Date and Time:</label
+      <div class="flex items-center justify-between mt-4">
+        <button
+          type="submit"
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
         >
-        <input
-          type="datetime-local"
-          id="start_datetime"
-          name="start_datetime"
-          class="w-full px-3 py-2 border rounded shadow appearance-none mb-4"
-          required
-        />
+          Create Contest
+        </button>
       </div>
-
-      <div class="w-1/2 pr-8 flex-col">
-        <label
-          for="finish_datetime"
-          class="block text-gray-700 text-sm font-bold mb-2 mt-4"
-          >Finish Date and Time:</label
-        >
-        <input
-          type="datetime-local"
-          id="finish_datetime"
-          name="finish_datetime"
-          class="w-full px-3 py-2 border rounded shadow appearance-none mb-4"
-          required
-        />
-      </div>
-
-      <div class="w-1/2 pr-8 flex-col">
-        <label
-          for="description"
-          class="block text-gray-700 text-sm font-bold mb-2 mt-4"
-          >Description:</label
-        >
-        <textarea
-          id="description"
-          name="description"
-          rows="4"
-          class="w-full px-3 py-2 border rounded shadow appearance-none mb-4"
-          required
-        ></textarea>
-      </div>
-
-      <div class="w-1/2 pr-8 flex-col">
-        <label
-          for="rules"
-          class="block text-gray-700 text-sm font-bold mb-2 mt-4"
-          >Rules:</label
-        >
-        <textarea
-          id="rules"
-          name="rules"
-          rows="4"
-          class="w-full px-3 py-2 border rounded shadow appearance-none mb-4"
-          required
-        ></textarea>
-      </div>
-
-      <div class="w-1/2 pr-8 flex-col">
-        <label
-          for="prices"
-          class="block text-gray-700 text-sm font-bold mb-2 mt-4"
-          >Prices:</label
-        >
-        <input
-          type="text"
-          id="prices"
-          name="prices"
-          class="w-full px-3 py-2 border rounded shadow appearance-none mb-4"
-          required
-        />
-      </div>
-
-      <div class="w-1/2 pr-8 flex-col">
-        <label
-          for="assigning_contest"
-          class="block text-gray-700 text-sm font-bold mb-2 mt-4"
-          >Assigning Contest:</label
-        >
-        <input
-          type="text"
-          id="assigning_contest"
-          name="assigning_contest"
-          class="w-full px-3 py-2 border rounded shadow appearance-none mb-4"
-          required
-        />
-      </div>
-    </div>
-
-    <div class="flex items-center justify-between mt-4">
-      <button
-        onclick="submitForm()"
-        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-      >
-        Create Contest
-      </button>
-    </div>
+    </form>
   </div>
 </div>
+
+<script>
+  document
+    .getElementById("createContestForm")
+    .addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      var formData = new FormData(this);
+      for (var [key, value] of formData.entries()) {
+        console.log(key, value);
+      }
+    });
+</script>
+
 {% endblock %}
