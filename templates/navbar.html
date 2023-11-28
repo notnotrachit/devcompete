@@ -33,6 +33,7 @@
       </div>
       <div class="navbar-end">
         {% if request.user.is_authenticated %}
+          <span class="text-2xl text-center text-primary">{{ request.user.username }}</span>
         <div class="dropdown dropdown-end">
           <label tabindex="0" class="btn btn-ghost btn-circle avatar">
             <div class="w-10 rounded-full">
