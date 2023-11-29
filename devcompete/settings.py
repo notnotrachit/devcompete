@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'allauth.socialaccount.providers.auth0',
     "widget_tweaks",
     'contest',
     'users',
@@ -160,6 +161,17 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 ACCOUNT_EMAIL_REQUIRED = True
+
+SOCIALACCOUNT_PROVIDERS = {
+    'auth0': {
+        'AUTH0_URL': 'https://devcompete.us.auth0.com',
+        'OAUTH_PKCE_ENABLED': True,
+    }
+}
+if os.getenv('WEBSITE_HOSTNAME') is not None:
+    ACCOUNT_DEFAULT_HTTP_PROTOCOL='https'
+else:
+    ACCOUNT_DEFAULT_HTTP_PROTOCOL='http'
 
 CHANNEL_LAYERS = {
     'default': {

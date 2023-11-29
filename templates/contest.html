@@ -279,13 +279,19 @@
       }
   };
 
-  editor.on("change", function() {
-      var code = editor.getValue();
-      if (socket.readyState == WebSocket.OPEN){
-        socket.send(JSON.stringify({
-            "code": code
-        }));
+  function sendCodeToSocket() {
+    var code = editor.getValue();
+    if (socket.readyState == WebSocket.OPEN) {
+      socket.send(JSON.stringify({
+        "code": code
+      }));
     }
+  }
+
+  var debouncedSendCodeToSocket = _.debounce(sendCodeToSocket, 500);
+
+  editor.on("change", function() {
+    debouncedSendCodeToSocket();
   });
 
   l_selector.addEventListener("change", function() {
