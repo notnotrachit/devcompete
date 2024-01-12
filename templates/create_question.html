@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block main %}
+
+<div class="flex justify-center my-10">
+<span class="text-3xl">Create New Question</span>
+</div>
+
+
+<div class="flex justify-center my-5">
+    <form class="form form-control">
+        {% csrf_token %}
+            <label class="w-full">
+            <div class="label">
+                <span class="label-text">Question Name</span>
+            </div>
+            <input type="text" name="question_name" placeholder="Type here" class="input w-full bg-transparent rounded-md" />
+            </label>
+            <label class="w-full">
+                <div class="label">
+                    <span class="label-text">Question Description</span>
+                </div>
+                <textarea name="question_description" placeholder="Type here" class="input border border-gray-500 textarea h-24 textarea-bordered w-[34rem]"></textarea>
+            </label>
+    </form>
+</div>
+
+{% endblock main %}
