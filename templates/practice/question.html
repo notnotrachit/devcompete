@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+
+{% block main %}
+<div class="mt-5 flex">
+    <div class="w-2/5 p-5 text-xl">
+        {{ question.question_name }}
+        <div class="">
+        {{ question.question_text }}
+        </div>
+    </div>
+
+    <div class="w-3/5 p-5 h-[90svh]">
+        <div id="editor" style="width: 100%; height: 100%; border-radius: 10px;"></div>
+    </div>
+
+
+</div>
+
+
+
+<script>
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/monokai");
+    editor.session.setMode("ace/mode/python");
+    editor.setOptions({
+        fontSize: "16pt",
+        showLineNumbers: true,
+        showGutter: true,
+    });
+
+</script>
+{% endblock main %}

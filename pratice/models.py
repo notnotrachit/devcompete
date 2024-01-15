@@ -8,6 +8,7 @@ class Question(models.Model):
     question_text = models.TextField()
     pub_date = models.DateTimeField('date publish')
     score = models.IntegerField(default=0)
+    difficulty = models.CharField(max_length=200, choices=[('easy', 'easy'), ('medium', 'medium'), ('hard', 'hard')], default='easy')
     test_cases = models.ForeignKey("TestCase", on_delete=models.CASCADE, null=True, blank=True)
 
 

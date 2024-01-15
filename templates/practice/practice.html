@@ -2,11 +2,11 @@
 <div class="flex justify-center">
   {% for question in all_questions %}
 
-  <div class="border border-primary rounded px-6 py-4 text-white my-2">
+  <a href="{% url 'question_page' question.id %}" class="border border-primary rounded px-6 py-4 text-white my-2">
     <div class="">
       <h1 class="font-bold text-xl">{{ question.question_name }}</h1>
     </div>
-  </div>
+  </a>
 
   {% endfor %}
 </div>

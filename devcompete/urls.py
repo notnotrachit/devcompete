@@ -20,7 +20,7 @@ from .views import MyView
 from contest.views import Contests, ContestView, ContestSubmission, ResultView, CreateContest, EndContest
 from django.contrib.auth.decorators import login_required
 from django.views.generic import RedirectView
-from pratice.views import practice_home, create_question
+from pratice.views import practice_home, create_question, question_page
 
 
 urlpatterns = [
@@ -35,6 +35,7 @@ urlpatterns = [
     path('end-contest/<int:id>/', login_required(EndContest.as_view()), name='end-contest'),
     path('accounts/profile/', RedirectView.as_view(url='/')),
     path('pratice', practice_home, name="pratice"),
-    path('pratice/create_question', create_question, name="create_question")
+    path('pratice/create_question', create_question, name="create_question"),
+    path('pratice/<int:question_id>/', question_page, name="question_page"),
     
 ]

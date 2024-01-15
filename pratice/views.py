@@ -4,7 +4,7 @@ from .models import Question, TestCase, Submission
 def practice_home(request):
     all_questions = Question.objects.all()
     context = {'all_questions': all_questions}
-    return render(request,  'practice.html', context)
+    return render(request,  'practice/practice.html', context)
 
 
 def create_question(request):
@@ -16,6 +16,12 @@ def create_question(request):
         test_cases = request.POST['test_cases']
         question = Question(question_name=question_name, question_text=question_text, pub_date=pub_date, score=score, test_cases=test_cases)
         question.save()
-        return render(request, 'practice.html')
+        return render(request, 'practice/practice.html')
     else:
-        return render(request, 'create_question.html')
+        return render(request, 'practice/create_question.html')
+    
+
+def question_page(request, question_id):
+    question = Question.objects.get(pk=question_id)
+    context = {'question': question}
+    return render(request, 'practice/question.html', context)
