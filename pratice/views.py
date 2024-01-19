@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, HttpResponse
 from .models import Question, TestCase, Submission
 import json
 import os
@@ -53,7 +53,8 @@ def run_code(request, question_id):
         question_testcases = TestCase.objects.filter(question=question).filter(hidden=False)
         total_testcase = len(question_testcases)
         correct_testcase = 0
-        language="python"
+        language=submission_code['lang']
+        testcase_stats = []
         for testcase in question_testcases:
             print(testcase.test_input)
             data = {
@@ -63,15 +64,24 @@ def run_code(request, question_id):
                 'redirect_stderr_to_stdout': True,
             }
             response = requests.post(endpoint, json=data)
-            output = response.json()['stdout'].strip()
-            resp = {
-                'output': output,
+            stats={
+                'memory': response.json()['memory'],
+                'time': response.json()['time'],
+                'result': False,
             }
+            testcase_stats.append(stats)
+            output = response.json()['stdout'].strip()
+
             if output == testcase.test_output:
                 correct_testcase += 1
+                stats['result'] = "Passed"
             print(response.json())
         print(correct_testcase)
-
-        return render(request, 'practice/question.html', {'question': question})
+        resp = {
+                'total_testcase': total_testcase,
+                'correct_testcase': correct_testcase,
+                'testcase_stats': testcase_stats,
+        }
+        return HttpResponse(json.dumps(resp), content_type="application/json")
     else:
         return render(request, 'practice/question.html', {'question': question})

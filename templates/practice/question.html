@@ -2,11 +2,12 @@
 
 
 {% block main %}
-<div class="mt-5 flex justify-center">
+<div class="mt-5 flex justify-center sticky top-16 z-10">
 <div class="join join-horizontal">
   <button class="btn btn-sm btn-info join-item disabled:bg-sky-500/70 disabled:text-black" id="run_btn"><span id="run_btn_text">Run</span></button>
   <button class="btn btn-sm btn-success join-item" id="submit_btn"><span id="submit_btn_text">Submit</span></button>
 </div>
+
 </div>
 
 <div class=" flex">
@@ -37,17 +38,49 @@
         </div>
     </div>
 
-    <div class="w-3/5 p-5 h-[87svh]">
+    <div class="w-3/5 p-2 h-[87svh] sticky top-16 -mt-8">
+        <div class="flex justify-end mb-2">
+            <select class="select select-bordered select-sm border border-primary/50" id="lang_selector">
+            <option selected>Python</option>
+            <option>C++</option>
+            <option>Java</option>
+            <option>Rust</option>
+            </select>
+        </div>
         <div id="editor" style="width: 100%; height: 100%; border-radius: 10px;" class="border-2 border-primary/50"></div>
     </div>
 </div>
 
 
+  <dialog id="output_modal" class="modal modal-bottom sm:modal-middle ">
+    <div class="modal-box border border-2 border-primary">
+      <div class="font-bold text-lg flex justify-between">
+        <span>Output</span>
+        <form method="dialog">
+          <button class="btn btn-error text-xs leading-none">✖</button>
+        </form>
+      </div>
+      <div id="output_result">
+      </div>
+      <br/>
+      <progress class="progress w-56" value="0" max="100" id="run_progress"></progress>
+        <table id="testcase_stats" class="table hidden">
+            <thead>
+                <th>Testcase</th>
+                <th>Time Taked</th>
+                <th>Memoery Used</th>
+                <th>Result</th>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+  </dialog>
 
 <script>
     var editor = ace.edit("editor");
     editor.setTheme("ace/theme/github_dark");
-    editor.session.setMode("ace/mode/c_cpp");
+    editor.session.setMode("ace/mode/python");
     editor.setOptions({
         fontSize: "10pt",
         showLineNumbers: true,
@@ -72,10 +105,14 @@
     run_btn.addEventListener("click", function () {
         run_btn_text.classList.add("loading");
         run_btn.disabled = true;
+        run_code_dialog = document.getElementById("output_modal");
+        run_code_dialog.showModal();
+        document.getElementById("output_result").classList.add("loading", "loading-infinity","loading-lg");
         var code = editor.getValue();
         var data = {
             code: code,
             question_id: {{ question.id }},
+            lang: document.getElementById("lang_selector").value,
         };
         fetch("/practice/{{ question.id }}/run", {
             method: "POST",
@@ -90,6 +127,47 @@
                 console.log(data);
                 run_btn_text.classList.remove("loading");
                 run_btn.disabled = false;
+                document.getElementById("output_result").classList.remove("loading", "loading-infinity","loading-lg");
+                document.getElementById("output_result").innerHTML = data.correct_testcase + " out of " + data.total_testcase + " testcases passed";
+                percent_correct = (data.correct_testcase / data.total_testcase) * 100;
+                var progressValue = 0;
+                var interval = setInterval(function() {
+                    if (progressValue >= percent_correct) {
+                        clearInterval(interval);
+                    } else {
+                        progressValue++;
+                        document.getElementById("run_progress").value = progressValue;
+                    }
+                }, 2);
+                if (percent_correct==100){
+                    document.getElementById("run_progress").classList.add("progress-success");
+                }
+                else if (percent_correct>80) {
+                    document.getElementById("run_progress").classList.add("progress-success");
+                } 
+                else if (percent_correct>50) {
+                    document.getElementById("run_progress").classList.add("progress-info");
+                }
+                else {
+                    document.getElementById("run_progress").classList.add("progress-warning");
+                }
+                stats_table = document.getElementById("testcase_stats");
+                stats_table.classList.remove("hidden");
+                table_body = stats_table.getElementsByTagName("tbody")[0];
+                testcase_stats = data.testcase_stats;
+                console.log(testcase_stats);
+                for (let i = 0; i < testcase_stats.length; i++) {
+                    var row = table_body.insertRow();
+                    var cell1 = row.insertCell();
+                    var cell2 = row.insertCell();
+                    var cell3 = row.insertCell();
+                    var cell4 = row.insertCell();
+                    test_case_num = i;
+                    cell1.innerHTML = "Testcase "+(i+1);
+                    cell2.innerHTML = testcase_stats[test_case_num].time;
+                    cell3.innerHTML = testcase_stats[test_case_num].memory;
+                    cell4.innerHTML = testcase_stats[test_case_num].result;
+                }
             });
         
     });
@@ -101,6 +179,19 @@
             input_box.checked = !input_box.checked;
         });
     }
+
+    lang_selector = document.getElementById("lang_selector");
+    lang_selector.addEventListener("change", function () {
+        if (lang_selector.value == "Python") {
+            editor.session.setMode("ace/mode/python");
+        } else if (lang_selector.value == "C++") {
+            editor.session.setMode("ace/mode/c_cpp");
+        } else if (lang_selector.value == "Java") {
+            editor.session.setMode("ace/mode/java");
+        } else if (lang_selector.value == "Rust") {
+            editor.session.setMode("ace/mode/rust");
+        }
+    });
 
 </script>
 {% endblock main %}
