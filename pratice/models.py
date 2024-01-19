@@ -9,7 +9,7 @@ class Question(models.Model):
     pub_date = models.DateTimeField('date publish')
     score = models.IntegerField(default=0)
     difficulty = models.CharField(max_length=200, choices=[('easy', 'easy'), ('medium', 'medium'), ('hard', 'hard')], default='easy')
-    test_cases = models.ForeignKey("TestCase", on_delete=models.CASCADE, null=True, blank=True)
+
 
 
 class TestCase(models.Model):
@@ -17,7 +17,7 @@ class TestCase(models.Model):
     test_output = models.TextField()
     test_score = models.IntegerField(default=1)
     hidden = models.BooleanField(default=False)
-
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="test_cases", blank=True, null=True)
 
 class Submission(models.Model):
     submission_text = models.TextField()

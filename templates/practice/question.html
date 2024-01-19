@@ -2,32 +2,105 @@
 
 
 {% block main %}
-<div class="mt-5 flex">
+<div class="mt-5 flex justify-center">
+<div class="join join-horizontal">
+  <button class="btn btn-sm btn-info join-item disabled:bg-sky-500/70 disabled:text-black" id="run_btn"><span id="run_btn_text">Run</span></button>
+  <button class="btn btn-sm btn-success join-item" id="submit_btn"><span id="submit_btn_text">Submit</span></button>
+</div>
+</div>
+
+<div class=" flex">
     <div class="w-2/5 p-5 text-xl">
         {{ question.question_name }}
         <div class="">
         {{ question.question_text }}
         </div>
+        <div>
+            {% for testcase in test_cases %}
+            <div class="collapse collapse-arrow join-item border border-primary/50 my-2" id="testcase">
+                <input type="radio" id="test_case_{{ forloop.counter }}" /> 
+                <div class="collapse-title text-xl font-medium">
+                Test Case {{ forloop.counter }}
+                </div>
+                <div class="collapse-content">
+                    <span class="text-white">Input:</span>
+                <div class="bg-gray-600 w-full p-3 rounded-xl">
+                    {{ testcase.test_input }}
+                </div>
+                <span class="text-white">Output:</span>
+                <div class="bg-gray-600 w-full p-3 rounded-xl">
+                    {{ testcase.test_output }}
+                </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
     </div>
 
-    <div class="w-3/5 p-5 h-[90svh]">
-        <div id="editor" style="width: 100%; height: 100%; border-radius: 10px;"></div>
+    <div class="w-3/5 p-5 h-[87svh]">
+        <div id="editor" style="width: 100%; height: 100%; border-radius: 10px;" class="border-2 border-primary/50"></div>
     </div>
-
-
 </div>
 
 
 
 <script>
     var editor = ace.edit("editor");
-    editor.setTheme("ace/theme/monokai");
-    editor.session.setMode("ace/mode/python");
+    editor.setTheme("ace/theme/github_dark");
+    editor.session.setMode("ace/mode/c_cpp");
     editor.setOptions({
-        fontSize: "16pt",
+        fontSize: "10pt",
         showLineNumbers: true,
-        showGutter: true,
+        showInvisibles: true,
     });
+
+    editor.on("change", function () {
+        var code = editor.getValue();
+        key_name = "question_" + {{ question.id }}+"_code";
+        localStorage.setItem(key_name, editor.getValue());
+    });
+
+    if (localStorage.getItem("question_" + {{ question.id }}+"_code") != null) {
+        editor.setValue(localStorage.getItem("question_" + {{ question.id }}+"_code"));
+    }
+
+    var run_btn = document.getElementById("run_btn");
+    var submit_btn = document.getElementById("submit_btn");
+    var run_btn_text = document.getElementById("run_btn_text");
+    var submit_btn_text = document.getElementById("submit_btn_text");
+
+    run_btn.addEventListener("click", function () {
+        run_btn_text.classList.add("loading");
+        run_btn.disabled = true;
+        var code = editor.getValue();
+        var data = {
+            code: code,
+            question_id: {{ question.id }},
+        };
+        fetch("/practice/{{ question.id }}/run", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify(data),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                run_btn_text.classList.remove("loading");
+                run_btn.disabled = false;
+            });
+        
+    });
+
+    testcase_accordions = document.getElementsByClassName("collapse-arrow");
+    for (let i = 0; i < testcase_accordions.length; i++) {
+        testcase_accordions[i].addEventListener("click", function () {
+            input_box = document.getElementById("test_case_" + (i + 1));
+            input_box.checked = !input_box.checked;
+        });
+    }
 
 </script>
 {% endblock main %}
