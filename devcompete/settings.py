@@ -112,6 +112,7 @@ ASGI_APPLICATION = 'devcompete.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+EMAIL_BACKEND = "django.core.mail.backends.dummy.EmailBackend"
 
 if os.getenv('WEBSITE_HOSTNAME') is not None:
     DATABASES = {

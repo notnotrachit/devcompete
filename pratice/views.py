@@ -1,8 +1,10 @@
 from django.shortcuts import render, HttpResponse
+from django.http import JsonResponse
 from .models import Question, TestCase, Submission
 import json
 import os
 import requests
+from devcompete.utils import optimisation_ai_help
 
 all_languages={
     "python": 71,
@@ -10,6 +12,18 @@ all_languages={
     "java": 62,
     "javascript": 63,
     "rust": 73,
+    "go": 60,
+    "golang": 60,
+    "c": 50,
+    "c#": 51,
+    "ruby": 72,
+    "php": 68,
+    "swift": 74,
+    "kotlin": 78,
+    "scala": 81,
+    "haskell": 82,
+    "perl": 84,
+    "elixir": 88,
 }
 
 
@@ -67,7 +81,7 @@ def run_code(request, question_id):
             stats={
                 'memory': response.json()['memory'],
                 'time': response.json()['time'],
-                'result': False,
+                'result': "Failed",
             }
             testcase_stats.append(stats)
             output = response.json()['stdout'].strip()
@@ -85,3 +99,22 @@ def run_code(request, question_id):
         return HttpResponse(json.dumps(resp), content_type="application/json")
     else:
         return render(request, 'practice/question.html', {'question': question})
+    
+
+def ai_optimize(request):
+    if request.method == 'POST':
+        req_data = request.body.decode('utf-8')
+        req_data = json.loads(req_data)
+        code = req_data['code']
+        question_id = req_data['question_id']
+        question = Question.objects.get(pk=question_id)
+        question = question.question_text
+        language = req_data['lang']
+        response = optimisation_ai_help(code, question, language)
+        print(response)
+        output={
+            'data': response
+        }
+        return JsonResponse(output)
+    else:
+        return render(request, 'practice/practice.html')

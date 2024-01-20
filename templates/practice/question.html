@@ -1,13 +1,42 @@
 {% extends "base.html" %}
 
+{% load static %}
+
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/practice.css' %}">
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+{% endblock head %}
+
 
 {% block main %}
-<div class="mt-5 flex justify-center sticky top-16 z-10">
+<div class="mt-5 flex justify-between sticky top-16 mx-5">
+    <div></div>
 <div class="join join-horizontal">
   <button class="btn btn-sm btn-info join-item disabled:bg-sky-500/70 disabled:text-black" id="run_btn"><span id="run_btn_text">Run</span></button>
   <button class="btn btn-sm btn-success join-item" id="submit_btn"><span id="submit_btn_text">Submit</span></button>
 </div>
-
+<div class="flex justify-end mb-2">
+    <div class="dropdown dropdown-end">
+        <div tabindex="0" role="button" class="mx-2 animate_gradient_btn p-0.5 rounded-md group" id="ai_btn"><div class="bg-base-200 text-white rounded-md py-1 px-2 group-hover:bg-transparent group-hover:text-black group-hover:font-bold transition-all ease-in-out">AI Help</div></div>
+    </div>
+    <select class="select select-bordered select-sm border border-primary/50" id="lang_selector">
+    <option selected>Python</option>
+    <option>C++</option>
+    <option>Java</option>
+    <option>Rust</option>
+    <option>Golang</option>
+    <option>C</option>
+    <option>JavaScript</option>
+    <option>PHP</option>
+    <option>Swift</option>
+    <option>C#</option>
+    <option>Scala</option>
+    <option>Kotlin</option>
+    <option>Perl</option>
+    <option>Ruby</option>
+    </select>
+</div>
 </div>
 
 <div class=" flex">
@@ -38,15 +67,7 @@
         </div>
     </div>
 
-    <div class="w-3/5 p-2 h-[87svh] sticky top-16 -mt-8">
-        <div class="flex justify-end mb-2">
-            <select class="select select-bordered select-sm border border-primary/50" id="lang_selector">
-            <option selected>Python</option>
-            <option>C++</option>
-            <option>Java</option>
-            <option>Rust</option>
-            </select>
-        </div>
+    <div class="w-3/5 p-2 h-[87svh] sticky top-16">
         <div id="editor" style="width: 100%; height: 100%; border-radius: 10px;" class="border-2 border-primary/50"></div>
     </div>
 </div>
@@ -74,6 +95,24 @@
             <tbody>
             </tbody>
         </table>
+    </div>
+  </dialog>
+
+  <dialog id="ai_modal" class="modal modal-bottom sm:modal-middle ">
+    <div class="modal-box border border-2 border-primary">
+      <div class="font-bold text-lg flex justify-between">
+        <span>AI Help</span>
+        <form method="dialog">
+          <button class="btn btn-error text-xs leading-none">✖</button>
+        </form>
+      </div>
+      <div id="ai_btns">
+        <button class="btn btn-sm btn-primary" id="Optimization_ai_help"><span id="optimize_ai_txt">Optimization Help</span></button>
+        <button class="btn btn-sm btn-primary">Syntax Help</button>
+      </div>
+      <div id="ai_response">
+
+      </div>
     </div>
   </dialog>
 
@@ -108,6 +147,10 @@
         run_code_dialog = document.getElementById("output_modal");
         run_code_dialog.showModal();
         document.getElementById("output_result").classList.add("loading", "loading-infinity","loading-lg");
+        stats_table = document.getElementById("testcase_stats");
+        stats_table.classList.add("hidden");
+        table_body = stats_table.getElementsByTagName("tbody")[0];
+        table_body.innerHTML = "";
         var code = editor.getValue();
         var data = {
             code: code,
@@ -151,9 +194,7 @@
                 else {
                     document.getElementById("run_progress").classList.add("progress-warning");
                 }
-                stats_table = document.getElementById("testcase_stats");
                 stats_table.classList.remove("hidden");
-                table_body = stats_table.getElementsByTagName("tbody")[0];
                 testcase_stats = data.testcase_stats;
                 console.log(testcase_stats);
                 for (let i = 0; i < testcase_stats.length; i++) {
@@ -190,7 +231,59 @@
             editor.session.setMode("ace/mode/java");
         } else if (lang_selector.value == "Rust") {
             editor.session.setMode("ace/mode/rust");
+        } else if (lang_selector.value == "Golang") {
+            editor.session.setMode("ace/mode/golang");
+        } else if (lang_selector.value == "C") {
+            editor.session.setMode("ace/mode/c_cpp");
+        } else if (lang_selector.value == "JavaScript") {
+            editor.session.setMode("ace/mode/javascript");
+        } else if (lang_selector.value == "PHP") {
+            editor.session.setMode("ace/mode/php");
+        } else if (lang_selector.value == "Swift") {
+            editor.session.setMode("ace/mode/swift");
+        } else if (lang_selector.value == "C#") {
+            editor.session.setMode("ace/mode/csharp");
+        } else if (lang_selector.value == "Scala") {
+            editor.session.setMode("ace/mode/scala");
+        } else if (lang_selector.value == "Kotlin") {
+            editor.session.setMode("ace/mode/kotlin");
+        } else if (lang_selector.value == "Perl") {
+            editor.session.setMode("ace/mode/perl");
+        } else if (lang_selector.value == "Ruby") {
+            editor.session.setMode("ace/mode/ruby");
         }
+    });
+
+    var ai_btn = document.getElementById("ai_btn");
+    ai_btn.addEventListener("click", function () {
+        document.getElementById("ai_modal").showModal();
+    });
+
+    var Optimization_ai_help = document.getElementById("Optimization_ai_help");
+    var optimize_ai_txt = document.getElementById("optimize_ai_txt");
+    Optimization_ai_help.addEventListener("click", function () {
+        optimize_ai_txt.classList.add("loading");
+        document.getElementById("ai_response").innerHTML = "";
+        var code = editor.getValue();
+        var data = {
+            code: code,
+            question_id: {{ question.id }},
+            lang: document.getElementById("lang_selector").value,
+        };
+        fetch("/api/ai/optimize", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify(data),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                document.getElementById("ai_response").innerHTML = marked.parse(data.data);
+                optimize_ai_txt.classList.remove("loading");
+            });
     });
 
 </script>

@@ -1,0 +1,36 @@
+
+#ai_btn {
+    background: linear-gradient(155deg, #ff6a00, #00ff0a, #ff0000);
+    background-size: 200% 200%;
+    -webkit-animation: animate_gradient_btn 4s ease infinite;
+    -moz-animation: animate_gradient_btn 4s ease infinite;
+    animation: animate_gradient_btn 4s ease infinite;
+    color: black;
+    
+}
+
+@keyframes animate_gradient_btn {
+    0% {
+            background-position: 48% 0%
+        }
+    
+        50% {
+            background-position: 53% 100%
+        }
+    
+        100% {
+            background-position: 48% 0%
+        }
+}
+
+details summary::-webkit-details-marker {
+    display: none;
+}
+
+details>summary {
+    list-style: none;
+}
+
+details>summary::-webkit-details-marker {
+    display: none;
+}
