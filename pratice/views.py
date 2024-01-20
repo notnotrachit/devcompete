@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render, HttpResponse, redirect
 from django.http import JsonResponse
 from .models import Question, TestCase, Submission
 import json
@@ -59,18 +59,14 @@ def run_code(request, question_id):
     if request.method == 'POST':
         submission_code = request.body.decode('utf-8')
         submission_code = json.loads(submission_code)
-        print(submission_code)
         endpoint = os.environ.get('JUDGE_ENDPOINT')
         endpoint += "/submissions/?base64_encoded=false&wait=true"
-
-        testcases = question.test_cases
         question_testcases = TestCase.objects.filter(question=question).filter(hidden=False)
         total_testcase = len(question_testcases)
         correct_testcase = 0
         language=submission_code['lang']
         testcase_stats = []
         for testcase in question_testcases:
-            print(testcase.test_input)
             data = {
                 'source_code': submission_code['code'],
                 'stdin': testcase.test_input,
@@ -89,8 +85,6 @@ def run_code(request, question_id):
             if output == testcase.test_output:
                 correct_testcase += 1
                 stats['result'] = "Passed"
-            print(response.json())
-        print(correct_testcase)
         resp = {
                 'total_testcase': total_testcase,
                 'correct_testcase': correct_testcase,
@@ -98,7 +92,7 @@ def run_code(request, question_id):
         }
         return HttpResponse(json.dumps(resp), content_type="application/json")
     else:
-        return render(request, 'practice/question.html', {'question': question})
+        return redirect('practice:question_page', question_id=question_id)
     
 
 def ai_optimize(request):
@@ -111,10 +105,51 @@ def ai_optimize(request):
         question = question.question_text
         language = req_data['lang']
         response = optimisation_ai_help(code, question, language)
-        print(response)
         output={
             'data': response
         }
         return JsonResponse(output)
     else:
         return render(request, 'practice/practice.html')
+
+
+def submit_code(request, question_id):
+    if request.method == 'POST':
+        question = Question.objects.get(pk=question_id)
+        submission_code = request.body.decode('utf-8')
+        submission_code = json.loads(submission_code)
+        endpoint = os.environ.get('JUDGE_ENDPOINT')
+        endpoint += "/submissions/?base64_encoded=false&wait=true"
+        question_testcases = TestCase.objects.filter(question=question).order_by('hidden')
+        total_testcase = len(question_testcases)
+        correct_testcase = 0
+        language=submission_code['lang']
+        testcase_stats = []
+        for testcase in question_testcases:
+            data = {
+                'source_code': submission_code['code'],
+                'stdin': testcase.test_input,
+                'language_id': all_languages[language.lower()],
+                'redirect_stderr_to_stdout': True,
+            }
+            response = requests.post(endpoint, json=data)
+            stats={
+                'memory': response.json()['memory'],
+                'time': response.json()['time'],
+                'result': "Failed",
+                'hidden': testcase.hidden,
+            }
+            testcase_stats.append(stats)
+            output = response.json()['stdout'].strip()
+
+            if output == testcase.test_output:
+                correct_testcase += 1
+                stats['result'] = "Passed"
+        resp = {
+                'total_testcase': total_testcase,
+                'correct_testcase': correct_testcase,
+                'testcase_stats': testcase_stats,
+        }
+        return HttpResponse(json.dumps(resp), content_type="application/json")
+    else:
+        return redirect('practice:question_page', question_id=question_id)

@@ -69,6 +69,7 @@ INSTALLED_APPS = [
     'users',
     'channels',
     'pratice',
+    'ckeditor'
 ]
 
 MIDDLEWARE = [
@@ -217,3 +218,5 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
+
+CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"
