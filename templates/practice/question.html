@@ -17,7 +17,7 @@
 </div>
 <div class="flex justify-end mb-2">
     <div class="dropdown dropdown-end">
-        <div tabindex="0" role="button" class="mx-2 animate_gradient_btn p-0.5 rounded-md group" id="ai_btn"><div class="bg-base-200 text-white rounded-md py-1 px-2 group-hover:bg-transparent group-hover:text-black group-hover:font-bold transition-all ease-in-out">AI Help</div></div>
+        <button tabindex="0" role="button" class="mx-2 animate_gradient_btn p-0.5 rounded-md group" id="ai_btn" onclick="ai_modal.showModal()"><div class="bg-base-200 text-white rounded-md py-1 px-2 group-hover:bg-transparent group-hover:text-black group-hover:font-bold transition-all ease-in-out">AI Help</div></button>
     </div>
     <select class="select select-bordered select-sm border border-primary/50" id="lang_selector">
     <option selected>Python</option>
@@ -107,7 +107,7 @@
       </div>
       <div id="ai_btns">
         <button class="btn btn-sm btn-primary" id="Optimization_ai_help"><span id="optimize_ai_txt">Optimization Help</span></button>
-        <button class="btn btn-sm btn-primary">Syntax Help</button>
+        <button class="btn btn-sm btn-primary hidden">Syntax Help</button>
       </div>
       <div id="ai_response">
 
@@ -334,10 +334,6 @@
         }
     });
 
-    var ai_btn = document.getElementById("ai_btn");
-    ai_btn.addEventListener("click", function () {
-        document.getElementById("ai_modal").showModal();
-    });
 
     var Optimization_ai_help = document.getElementById("Optimization_ai_help");
     var optimize_ai_txt = document.getElementById("optimize_ai_txt");

@@ -153,3 +153,8 @@ def submit_code(request, question_id):
         return HttpResponse(json.dumps(resp), content_type="application/json")
     else:
         return redirect('practice:question_page', question_id=question_id)
+    
+
+def AI_Chat(request):
+
+    return render(request, 'AI_Chat.html')
