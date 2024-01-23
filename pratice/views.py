@@ -4,7 +4,8 @@ from .models import Question, TestCase, Submission
 import json
 import os
 import requests
-from devcompete.utils import optimisation_ai_help
+from devcompete.utils import optimisation_ai_help, ai_chat
+import pickle
 
 all_languages={
     "python": 71,
@@ -156,5 +157,15 @@ def submit_code(request, question_id):
     
 
 def AI_Chat(request):
-
-    return render(request, 'AI_Chat.html')
+    if request.method=="GET":
+        return render(request, 'AI_Chat.html')
+    else:
+        req_post = request.body.decode('utf-8')
+        req_post = json.loads(req_post)
+        try:
+            chat_history = req_post['chat_history']
+        except:
+            chat_history = []
+        query = req_post['query']
+        msg_history, response = ai_chat(chat_history, query)
+        return JsonResponse({'response': response, 'msg_history': msg_history})

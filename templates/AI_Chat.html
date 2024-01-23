@@ -1,28 +1,70 @@
 {% extends 'base.html' %}
 
+{% block head %}
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+{% endblock head %}
 
 {% block main %}
 <div class="h-[90%]">
-<div class="w-full my-10 px-10">
-<div class="chat chat-start h-full">
-  <div class="chat-bubble">Hello, I am Devcompete AI</div>
-</div>
-<div class="chat chat-end">
-  <div class="chat-bubble">You underestimate my power!</div>
-</div>
-<div class="chat chat-start h-full">
-  <div class="chat-bubble">Hello, I am Devcompete AI</div>
-</div>
-</div>
+  <div class="flex justify-center">
+    <div class="w-1/2 my-10 px-10" id="chat_window">
+    <div class="chat chat-start h-full">
+      <div class="chat-bubble">Hello, I am Devcompete AI</div>
+    </div>
+    </div>
+  </div>
 <div class="fixed bottom-8 w-full">
 <div class="flex justify-center join">
-<input type="text" class="w-1/2 border-2 border-primary bg-base-300 input input-bordered text-black rounded-lg p-2 join-item" placeholder="Type your message here...">
-<button class="btn btn-primary rounded-r-[100%] join-item border-2 border-primary" id="send_chat">Send</button>
+<input type="text" class="w-1/2 border-2 border-primary bg-base-300 input input-bordered text-black rounded-lg p-2 join-item" placeholder="Type your message here..." id="message">
+<button class="btn btn-primary rounded-r-[100%] join-item border-2 border-primary" id="send_chat"><span id="send_btn_txt">Send</span></button>
 </div>
 </div>
 </div>
 <script>
+  message_history = [];
+  var doc_button = document.getElementById("send_chat");
+  doc_button.addEventListener("click", function() {
+    doc_button.disabled=true;
+    document.getElementById("send_btn_txt").classList.add("loading");
+    response = fetch("/ai/",{
+      method: "POST",
+      body: JSON.stringify({
+        "query": document.getElementById("message").value,
+        "chat_history": message_history
+      }),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+        "X-CSRFToken": "{{ csrf_token }}"
+      },
+    }
+    )
+    .then(response => response.json())
+    .then(data => {
+      message_history=data.msg_history;
+      ai_response = data.response;
+      var chat_window = document.getElementById("chat_window");
 
+      var chat_bubble_user = document.createElement("div");
+      chat_bubble_user.className = "chat chat-end";
+      var chat_bubble_text_user = document.createElement("div");
+      chat_bubble_text_user.className = "chat-bubble";
+      chat_bubble_text_user.innerHTML = document.getElementById("message").value;
+      chat_bubble_user.appendChild(chat_bubble_text_user);
+      chat_window.appendChild(chat_bubble_user);
+      document.getElementById("message").value = "";
+
+      var chat_bubble = document.createElement("div");
+      chat_bubble.className = "chat chat-start";
+      var chat_bubble_text = document.createElement("div");
+      chat_bubble_text.className = "chat-bubble";
+      chat_bubble_text.innerHTML = marked.parse(ai_response);
+      chat_bubble.appendChild(chat_bubble_text);
+      chat_window.appendChild(chat_bubble);
+
+      doc_button.disabled=false;
+      document.getElementById("send_btn_txt").classList.remove("loading");
+    });
+  });
 
 </script>
 

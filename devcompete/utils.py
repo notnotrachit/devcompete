@@ -32,5 +32,8 @@ def optimisation_ai_help(code, question, language):
 
 
 def ai_chat(chat_history, query):
-    response = model.generate_content(chat_history + "\n\n" + query)
-    return response.text
+    chat_history.append({"role": "user", "parts": [query]})
+    response = model.generate_content(chat_history)
+    chat_history.append({"role": "model", "parts": [response.text]})
+    return chat_history, response.text
+
