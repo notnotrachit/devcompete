@@ -18,17 +18,17 @@ model = genai.GenerativeModel('gemini-pro')
 
 def optimisation_ai_help(code, question, language):
     prompt="I am trying to solve the following problem:\n" + question + "\n\nMy code is:\n" + code + "\n\nI am using " + language + " to solve this problem.\n\n. Now help me in optimizing this code. Remember, don't give me the solution, just help me in optimizing my code. Do not give any code. Just answer in few lines."
-    # response = model.generate_content(prompt)
-    # response = client.completions.create(model=deployment_name, prompt=prompt)
-    completion = client.chat.completions.create(model="gpt35",
-    # messages=prompt)
-      messages=[
-    {"role": "system", "content": "You are a helpful assistant."},
-    {"role": "user", "content": prompt}
-  ])
-    print(completion.choices[0].message.content)
-    return completion.choices[0].message.content
-    # return response.text
+    ai_backend = "gemini"
+    if ai_backend=="gemini":
+        response = model.generate_content(prompt)
+        return response.text
+    else:
+        completion = client.chat.completions.create(model="gpt35",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": prompt}
+        ])
+        return completion.choices[0].message.content
 
 
 def ai_chat(chat_history, query):
