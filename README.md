@@ -39,6 +39,9 @@ You can pratice coding problems on our platform in a very user friendly & appeal
 You can participate in 1v1 coding contests on our platform. 
 The contest modules allows users to see realtime progress of their opponenet to make the contest more interesting.
 
+### AI Chat
+You can chat with our AI to get help with learn and upskill yourself. You can also get help from AI and get subtle hints to improve your code to optimize it.
+
 ## Project Structure
 
 The project is organized into several Django apps, each serving a different part of the application:
@@ -62,3 +65,4 @@ Judge0 executes our code in an isolated environment. The code is executed in a d
 - Azure App Service: For hosting the Django app
 - Azure Database for MySQL: For storing the data
 - Redis Cloud: For caching the data
+- Azure OpenAI Service: For AI help & Code analysis based on gpt3.5 model
