@@ -176,19 +176,23 @@ if os.getenv('WEBSITE_HOSTNAME') is not None:
 else:
     ACCOUNT_DEFAULT_HTTP_PROTOCOL='http'
 
+# CHANNEL_LAYERS = {
+#     'default': {
+#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
+
+#         'CONFIG': {
+#             "hosts": [{
+#             "address": os.getenv("REDIS_URL"),  # "REDIS_TLS_URL"
+#         }],
+#         },
+#     },
+# }
+
 CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-
-        'CONFIG': {
-            "hosts": [{
-            "address": os.getenv("REDIS_URL"),  # "REDIS_TLS_URL"
-        }],
-        },
-    },
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
 }
-
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/

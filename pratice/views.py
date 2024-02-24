@@ -5,7 +5,6 @@ import json
 import os
 import requests
 from devcompete.utils import optimisation_ai_help, ai_chat
-import pickle
 
 all_languages={
     "python": 71,
@@ -75,6 +74,7 @@ def run_code(request, question_id):
                 'redirect_stderr_to_stdout': True,
             }
             response = requests.post(endpoint, json=data)
+            # print(response.json())
             stats={
                 'memory': response.json()['memory'],
                 'time': response.json()['time'],
@@ -82,7 +82,8 @@ def run_code(request, question_id):
             }
             testcase_stats.append(stats)
             output = response.json()['stdout'].strip()
-
+            print(output)
+            print(testcase.test_output)
             if output == testcase.test_output:
                 correct_testcase += 1
                 stats['result'] = "Passed"
