@@ -115,30 +115,30 @@ ASGI_APPLICATION = 'devcompete.asgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 EMAIL_BACKEND = "django.core.mail.backends.dummy.EmailBackend"
 
-if os.getenv('WEBSITE_HOSTNAME') is not None:
-    DATABASES = {
-        # 'default': {
-        #     'ENGINE': 'django.db.backends.sqlite3',
-        #     'NAME': BASE_DIR / 'db.sqlite3',
-        # }
-        'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        # 'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv("DB_NAME"),
-        'USER': os.getenv("DB_USER"),
-        'PASSWORD': os.getenv("DB_PASS"),
-        'HOST': os.getenv("DB_HOST"),
-        'PORT': os.getenv("DB_PORT", 3306),
-        # 'SSL': 'ENABLED'
-        }
+# if os.getenv('WEBSITE_HOSTNAME') is not None:
+DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
+    'default': {
+    # 'ENGINE': 'django.db.backends.mysql',
+    'ENGINE': 'django.db.backends.postgresql',
+    'NAME': os.getenv("DB_NAME"),
+    'USER': os.getenv("DB_USER"),
+    'PASSWORD': os.getenv("DB_PASS"),
+    'HOST': os.getenv("DB_HOST"),
+    'PORT': os.getenv("DB_PORT", 5432),
+    # 'SSL': 'ENABLED'
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+}
+# else:
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.sqlite3',
+#             'NAME': BASE_DIR / 'db.sqlite3',
+#         }
+#     }
 STORAGES = {
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
@@ -155,7 +155,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
-    {
+    {   
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
     {
